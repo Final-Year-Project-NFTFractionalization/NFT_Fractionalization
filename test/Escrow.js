@@ -6,5 +6,50 @@ const tokens = (n) => {
 }
 
 describe('Escrow', () => {
+    let buyer,seller,lender,inspector;
+    let realEstate,escrow;
 
+    beforeEach(async() =>{
+        //Setup accounts
+        [buyer,seller,lender,inspector] = await ethers.getSigners(); //assigns the address to each account based on the hardhat node addresses 
+
+        //Deploy RealEstate Contract
+        const RealEstate = await ethers.getContractFactory('RealEstate');
+        realEstate = await RealEstate.deploy();
+
+        //Mint nft through seller
+        let transaction = await realEstate.connect(seller).mint("https://ipfs.io/ipfs/QmTudSYeM7mz3PkYEWXWqPjomRPHogcMFSq7XAvsvsgAPS");
+        await transaction.wait();
+
+        //Deploy Escrow Contract
+        const Escrow = await ethers.getContractFactory('Escrow');
+        escrow = await Escrow.deploy(
+            realEstate.address,
+            lender.address,
+            inspector.address,
+            seller.address
+        );
+    })
+
+    describe('Deployment', () => {
+        it('Returns NFT Address',async() => {
+            const result = await escrow.nftAddress();
+            expect(result).to.be.equal(realEstate.address);
+        })
+
+        it('Returns Seller',async() => {
+            const result = await escrow.seller();
+            expect(result).to.be.equal(seller.address);
+        })
+
+        it('Returns Lender',async() => {
+            const result = await escrow.lender();
+            expect(result).to.be.equal(lender.address);
+        })
+
+        it('Returns Inspector',async() => {
+            const result = await escrow.inspector();
+            expect(result).to.be.equal(inspector.address);
+        })
+    })
 })
