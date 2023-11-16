@@ -22,4 +22,13 @@ contract Escrow {
         inspector = _inspector;
         seller = _seller;
     }
+
+    //Listing properties on our website
+    function list(uint256 _nftID) public {
+        //create an instance of the ERC721 contract located at address 'nftAddress'
+        //seller listing function and it's address captured through msg.sender
+        //this nft address that seller has now is stored in this smart contract address until a purchase made
+        //_nftID passed
+        IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID);
+    }
 }
