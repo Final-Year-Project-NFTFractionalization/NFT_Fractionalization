@@ -70,5 +70,16 @@ describe('Escrow', () => {
             const result = await escrow.isListed(1);    
             expect(result).to.be.equal(true);
         })
+
+        it('Returns Purchase Amount',async()=>{
+            const result = await escrow.purchasePrice(1);
+            expect(result).to.be.equal(tokens(10));
+        })
+
+        it('Returns Escrow Amount',async() =>{
+            const result = await escrow.escrowAmount(1);
+            expect(result).to.be.equal(tokens(5));
+        })
+
     })
 })
