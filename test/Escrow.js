@@ -35,7 +35,7 @@ describe('Escrow', () => {
         await transaction.wait();
 
         //List Property
-        transaction = await escrow.connect(seller).list(1);
+        transaction = await escrow.connect(seller).list(1,buyer.address,tokens(10),tokens(5));
         await transaction.wait();
     })
 
@@ -64,6 +64,11 @@ describe('Escrow', () => {
     describe('Listing', ()=>{
         it('Updates ownership',async() =>{
             expect(await realEstate.ownerOf(1)).to.be.equal(escrow.address);
+        })
+
+        it('Updates NFT as Listed',async() =>{
+            const result = await escrow.isListed(1);    
+            expect(result).to.be.equal(true);
         })
     })
 })
