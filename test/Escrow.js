@@ -71,6 +71,11 @@ describe('Escrow', () => {
             expect(result).to.be.equal(true);
         })
 
+        it('Returns Buyer',async()=>{
+            const result = await escrow.buyer(1);
+            expect(result).to.be.equal(buyer.address);
+        })
+
         it('Returns Purchase Amount',async()=>{
             const result = await escrow.purchasePrice(1);
             expect(result).to.be.equal(tokens(10));
