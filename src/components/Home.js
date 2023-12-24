@@ -68,9 +68,6 @@ const[owner,setOwner]= useState(false)
         
         hasBought(true)
 
-
-
-        
     }
     const inspectHandler = async()=>{
         const signer = await provider.getSigner()
