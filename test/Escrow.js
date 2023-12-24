@@ -155,4 +155,5 @@ describe('Escrow', () => {
             expect(await escrow.getBalance()).to.be.equal(0);
         })
     })
+
 })
