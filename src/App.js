@@ -42,6 +42,7 @@ const loadBlockchainData = async()=>{
       homes.push(metadata)
     }
     setHomes(homes)
+    console.log(homes)
     
   const escrow= new ethers.Contract(config[network.chainId].escrow.address ,Escrow, provider)
   setEscrow(escrow)
@@ -79,28 +80,21 @@ const loadBlockchainData = async()=>{
         <hr />
 
         <div className='cards'>
-          {homes.map((home,index)=>(
-
-            <div className='card' key={index} onClick={(togglePop(home))}>
-
-            <div className='card__image'>
-
-             <img src={home.image} alt='Home'/>
-
+          {homes.map((home, index) => (
+            <div className='card' key={index} onClick={() => togglePop(home)}>
+              <div className='card__image'>
+                <img src={home.image} alt="Home" />
+              </div>
+              <div className='card__info'>
+                <h4>{home.attributes[0].value} ETH</h4>
+                <p>
+                  <strong>{home.attributes[2].value}</strong> bds |
+                  <strong>{home.attributes[3].value}</strong> ba |
+                  <strong>{home.attributes[4].value}</strong> sqft
+                </p>
+                <p>{home.address}</p>
+              </div>
             </div>
-            <div className='card__info'>
-            <h4>{home.attributes[0].value}ETH</h4>
-            <p>
-
-            <strong>{home.attributes[2].value}</strong> bds |
-            <strong>{home.attributes[3].value}</strong> ba |
-            <strong>{home.attributes[4].value}</strong> sqft
-
-            </p>
-              <p>{home.address}</p>
-            </div>
-            </div>               
-
           ))}
         </div>
       </div>
