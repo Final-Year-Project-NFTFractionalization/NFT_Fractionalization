@@ -5,6 +5,7 @@ import { ethers } from 'ethers';
 import Navigation from './components/Navigation';
 import Search from './components/Search';
 import Home from './components/Home';
+import PropertyListingform from './components/PropertyListingform';
 
 // ABIs
 import RealEstate from './abis/RealEstate.json'
@@ -12,6 +13,9 @@ import Escrow from './abis/Escrow.json'
 
 // Config
 import config from './config.json';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Include Link here
+import { Link } from "react-router-dom";
+ 
 
 function App() {
 
@@ -56,9 +60,6 @@ const loadBlockchainData = async()=>{
 
 })
 
-
-
-
 }
   useEffect(()=>{
     loadBlockchainData()
@@ -72,6 +73,11 @@ const loadBlockchainData = async()=>{
 
   return (
     <div>
+    <Routes>
+      {/* <Route path="/" element={<Home />}></Route> */}
+      <Route path="/PropertyListingform" element={<PropertyListingform />}></Route>
+
+    </Routes>
       <Navigation account={account} setAccount={setAccount} />
       <Search />
       <div className='cards__section'>

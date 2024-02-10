@@ -106,15 +106,7 @@ const[owner,setOwner]= useState(false)
     
 
 
-
-
-
-
-
-
-
-
-
+    
     useEffect(()=>{
 
         fetchDetails()

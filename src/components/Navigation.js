@@ -1,4 +1,7 @@
 import logo from '../assets/logo.svg';
+import { Link } from "react-router-dom";
+// import { ListGroup, ListGroupItem } from 'reactstrap';
+
 
 const Navigation = ({ account, setAccount }) => {
 
@@ -8,25 +11,21 @@ const connectHandler = async()=>{
 
 }
 
-
     return(
 
         <nav>
             <ul className='nav__links'>
             <li>
-          <a href='#' onClick={() => ('Buy')}>
-            Buy
-          </a>
+            {/* <Link className="nav_a_tag" to="/" 
+           tag="a" action>Buy</Link> */}
         </li>
+        {/* <li> */}
+        {/* <Link className="nav_a_tag" to="/" 
+           tag="a" action>Rent</Link>
+        </li> */}
         <li>
-          <a href='#' onClick={() => ('Rent')}>
-            Rent
-          </a>
-        </li>
-        <li>
-          <a href='#' onClick={() => ('Sell')}>
-            Sell
-          </a>
+          <Link className="nav_a_tag" to="/PropertyListingform" 
+           tag="a" action>Sell</Link>
         </li>
 
             </ul>
