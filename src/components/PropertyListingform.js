@@ -1,9 +1,8 @@
-
-
 import React, { useState } from 'react';
 import '../css/PropertyListingform.css';
+import axios from 'axios';
 
-const PropertyListingform = ({ onSubmit }) => {
+const PropertyListingform = () => {
   const [listing, setListing] = useState({
     image: '',
     price: '',
@@ -21,11 +20,25 @@ const PropertyListingform = ({ onSubmit }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) =>{
     e.preventDefault();
-    // Pass the new listing to the parent component or handle the submission logic here
-    onSubmit(listing);
-  };
+
+    try{
+      // Make a request to the Node.js script to add data to IPFS
+      const response = await axios.post('http://localhost:3002/addDataToIPFS', listing);
+
+      //extract cid from response
+      const cid = response.data.cid;
+      
+      // Handle the CID as needed (e.g., store it in a database, display it to the user)
+       console.log('IPFS CID:', cid);
+
+      // Log the form data
+      console.log('Submitted Form Data:', listing);
+    }catch(error){
+      console.log("Error adding property to IPFS",error);
+    }
+  }
 
   return (
     <form className="property-form" onSubmit={handleSubmit}>
@@ -57,8 +70,5 @@ const PropertyListingform = ({ onSubmit }) => {
     </form>
   );
 };
-
-
-
 
 export default PropertyListingform;

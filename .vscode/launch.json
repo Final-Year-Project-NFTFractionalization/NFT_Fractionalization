@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Attach to Node.js",
+        "type": "node",
+        "request": "attach",
+        "port": 56235, // Adjust the port number accordingly
+        "skipFiles": ["<node_internals>/**"]
+      }
+    ]
+  }
+  
