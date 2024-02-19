@@ -20,8 +20,29 @@ app.post('/addDataToIPFS', async (req, res) => {
   try {
     const formData = req.body; // Retrieve form data from request body
 
-    // Convert the form data to JSON string
-    const data = JSON.stringify(formData);
+    // Convert the image file to a buffer
+    // const imageBuffer = Buffer.from(await formData.image.arrayBuffer());
+
+    // Add the image buffer to IPFS
+    // const imageCID = await ipfs.add(imageBuffer);
+    // console.log(imageCID)
+
+    // Prepare the JSON object with the desired structure, including the image CID
+    const propertyData = {
+      name: formData.name,
+      address: formData.address,
+      description: formData.description,
+      // imageCID: imageCID.path, // Store the CID of the image on IPFS
+      attributes: {
+        bath: formData.bath,
+        beds: formData.beds,
+        price: formData.price,
+        sqft: formData.sqft,
+      },
+    };
+
+    // Convert the property data to a JSON string
+    const data = JSON.stringify(propertyData);
 
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);

@@ -4,7 +4,9 @@ import axios from 'axios';
 
 const PropertyListingform = () => {
   const [listing, setListing] = useState({
-    image: '',
+    name: '',
+    description: '',
+    image: null,
     price: '',
     beds: '',
     bath: '',
@@ -13,16 +15,26 @@ const PropertyListingform = () => {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setListing((prevListing) => ({
-      ...prevListing,
-      [name]: value,
-    }));
+    const { name, value, type } = e.target;
+
+    // Handle file input separately
+    if (type === 'file') {
+      setListing((prevListing) => ({
+        ...prevListing,
+        [name]: e.target.files[0], // Save the File object
+      }));
+    } else {
+      // For other inputs, handle normally
+      setListing((prevListing) => ({
+        ...prevListing,
+        [name]: value,
+      }));
+    }
   };
 
-  const handleSubmit = async(e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try{
       // Make a request to the Node.js script to add data to IPFS
       const response = await axios.post('http://localhost:3002/addDataToIPFS', listing);
@@ -35,36 +47,45 @@ const PropertyListingform = () => {
 
       // Log the form data
       console.log('Submitted Form Data:', listing);
-    }catch(error){
-      console.log("Error adding property to IPFS",error);
+    } catch (error) {
+      console.log('Error adding property to IPFS', error);
     }
-  }
+  };
+  
 
   return (
     <form className="property-form" onSubmit={handleSubmit}>
       <label>
-        House Picture URL:
-        <input type="text" name="image" className='inputs' value={listing.image} onChange={handleChange} />
+        Name:
+        <input type="text" name="name" className="inputs" value={listing.name} onChange={handleChange} />
       </label>
       <label>
-        Price (ETH):
-        <input type="text" name="price" className='inputs' value={listing.price} onChange={handleChange} />
+        Description:
+        <textarea name="description" className="inputs" value={listing.description} onChange={handleChange} />
       </label>
       <label>
-        Beds:
-        <input type="text" name="beds" className='inputs' value={listing.beds} onChange={handleChange} />
+        House Picture:
+        <input type="file" name="image" accept="image/png" onChange={handleChange} />
       </label>
       <label>
-        Bath:
-        <input type="text" name="bath" className='inputs' value={listing.bath} onChange={handleChange} />
+        Purchase Price (ETH):
+        <input type="text" name="price" className="inputs" value={listing.price} onChange={handleChange} />
       </label>
       <label>
-        Sqft:
-        <input type="text" name="sqft" className='inputs' value={listing.sqft} onChange={handleChange} />
+        Bed Rooms:
+        <input type="text" name="beds" className="inputs" value={listing.beds} onChange={handleChange} />
+      </label>
+      <label>
+        Bathrooms:
+        <input type="text" name="bath" className="inputs" value={listing.bath} onChange={handleChange} />
+      </label>
+      <label>
+        Square Feet:
+        <input type="text" name="sqft" className="inputs" value={listing.sqft} onChange={handleChange} />
       </label>
       <label>
         Address:
-        <input type="text" name="address" className='inputs' value={listing.address} onChange={handleChange} />
+        <input type="text" name="address" className="inputs" value={listing.address} onChange={handleChange} />
       </label>
       <button type="submit"><b>List Property</b></button>
     </form>
