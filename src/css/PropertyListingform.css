@@ -1,0 +1,38 @@
+
+.property-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #6f42c1; /* Purple */
+    color: #3498db; /* Blue */
+  }
+  
+  label {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #ffffff; /* White */
+  }
+  
+  .inputs {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #3498db; /* Blue */
+    border-radius: 4px;
+  }
+  
+  button {
+    padding: 10px;
+    background-color: #3498db; /* Blue */
+    color: #ffffff; /* White */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #2980b9; /* Darker Blue */
+  }
+  
