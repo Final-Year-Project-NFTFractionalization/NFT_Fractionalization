@@ -14,13 +14,7 @@
     "kubo-rpc-client": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-<<<<<<< HEAD
     "react-scripts": "^3.0.1",
-=======
-    "react-router-dom": "^6.21.3",
-    "react-scripts": "5.0.1",
-    "reactstrap": "^9.2.2",
->>>>>>> feb961548ba416c2b50f46367acf3eebe0723d2c
     "web-vitals": "^2.1.4"
   },
   "scripts": {
