@@ -73,13 +73,10 @@ const loadBlockchainData = async()=>{
 
   return (
     <div>
-    <Routes>
-      {/* <Route path="/" element={<Home />}></Route> */}
-      <Route path="/PropertyListingform" element={<PropertyListingform />}></Route>
-
-    </Routes>
+    
       <Navigation account={account} setAccount={setAccount} />
-      <Search />
+      <Routes>
+      <Route path="/" element={<div><Search />
       <div className='cards__section'>
 
         <h3>Homes for you</h3>
@@ -103,7 +100,11 @@ const loadBlockchainData = async()=>{
             </div>
           ))}
         </div>
-      </div>
+      </div></div>}></Route>
+      <Route path="/PropertyListingform" element={<PropertyListingform />}></Route>
+
+    </Routes>
+      
               {toggle && (
                 <Home home={home} provider={provider} account={account} escrow={escrow} togglePop={togglePop}       />
 
