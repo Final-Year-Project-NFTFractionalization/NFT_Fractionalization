@@ -16,13 +16,13 @@ const connectHandler = async()=>{
         <nav>
             <ul className='nav__links'>
             <li>
-            {/* <Link className="nav_a_tag" to="/" 
-           tag="a" action>Buy</Link> */}
+           <Link className="nav_a_tag" to="/" 
+           tag="a" action>Home</Link> 
         </li>
-        {/* <li> */}
-        {/* <Link className="nav_a_tag" to="/" 
+         {/* <li> 
+        <Link className="nav_a_tag" to="/" 
            tag="a" action>Rent</Link>
-        </li> */}
+        </li>  */}
         <li>
           <Link className="nav_a_tag" to="/PropertyListingform" 
            tag="a" action>Sell</Link>
