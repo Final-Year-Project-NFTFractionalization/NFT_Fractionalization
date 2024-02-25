@@ -17,14 +17,12 @@ const PropertyListingform = () => {
   const handleChange = (e) => {
     const { name, value, type } = e.target;
 
-    // Handle file input separately
     if (type === 'file') {
       setListing((prevListing) => ({
         ...prevListing,
         [name]: e.target.files[0], // Save the File object
       }));
     } else {
-      // For other inputs, handle normally
       setListing((prevListing) => ({
         ...prevListing,
         [name]: value,
@@ -35,26 +33,34 @@ const PropertyListingform = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    try{
-      // Make a request to the Node.js script to add data to IPFS
-      const response = await axios.post('http://localhost:3002/addDataToIPFS', listing);
+    try {
+      const formData = new FormData();
+      formData.append('name', listing.name);
+      formData.append('description', listing.description);
+      formData.append('image', listing.image);
+      formData.append('price', listing.price);
+      formData.append('beds', listing.beds);
+      formData.append('bath', listing.bath);
+      formData.append('sqft', listing.sqft);
+      formData.append('address', listing.address);
 
-      //extract cid from response
+      const response = await axios.post('http://localhost:3002/addDataToIPFS', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+        },
+      });
+  
+      // Handle response
       const cid = response.data.cid;
-      
-      // Handle the CID as needed (e.g., store it in a database, display it to the user)
-       console.log('IPFS CID:', cid);
-
-      // Log the form data
+      console.log('IPFS CID:', cid);
       console.log('Submitted Form Data:', listing);
     } catch (error) {
       console.log('Error adding property to IPFS', error);
     }
   };
   
-
   return (
-    <form className="property-form" onSubmit={handleSubmit}>
+    <form className="property-form" onSubmit={handleSubmit} encType="multipart/form-data">
       <label>
         Name:
         <input type="text" name="name" className="inputs" value={listing.name} onChange={handleChange} />
@@ -65,7 +71,7 @@ const PropertyListingform = () => {
       </label>
       <label>
         House Picture:
-        <input type="file" name="image" accept="image/png" onChange={handleChange} />
+        <input type="file" name="image" onChange={handleChange} />
       </label>
       <label>
         Purchase Price (ETH):
