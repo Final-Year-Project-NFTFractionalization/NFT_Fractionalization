@@ -47,6 +47,21 @@ app.post('/addDataToIPFS', async (req, res) => {
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
     console.log(cid);
+    const fs = require('fs');
+    const directory = 'C://Software Codes//FYP//NFT_Fractionalization//metadata/';
+    const variableName = '4';
+    const filename = variableName + '_data.json';
+
+    // Construct the full file path
+    const filePath = directory + filename;
+    fs.writeFile(filePath, jsonString, (err) => {
+      if (err) {
+        console.error('Error writing file:', err);
+        return;
+      }
+      console.log('File successfully written to:', filePath);
+    });
+
 
     // Send the CID as response
     res.json({ cid: cid.toString() });
