@@ -4,9 +4,7 @@ import multer from 'multer';
 import bodyParser from 'body-parser';
 import ethUtil from 'ethereumjs-util'; 
 import fs from 'fs';
-import Counter from './services/countservice.js';
-// const fs = require('fs');
-let fileCount = 4;
+
 const app = express();
 const ipfs = await create({ host: '127.0.0.1', port: 5001, protocol: 'http' });
 
