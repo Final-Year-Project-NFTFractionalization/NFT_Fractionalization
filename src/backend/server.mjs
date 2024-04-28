@@ -74,22 +74,24 @@ app.post('/authenticate', (req, res) => {
   }
 
   // Verify the signature
-  const prefix = '\x19Ethereum Signed Message:\n' + String(signature.length);
-  console.log(prefix);
-  const prefixedMessage = ethUtil.keccak(Buffer.from(prefix + signature));
-  console.log(prefixedMessage);
-  const { v, r, s } = ethUtil.fromRpcSig(signature);
-  const publicKey = ethUtil.ecrecover(prefixedMessage, v, r, s);
-  console.log(publicKey);
-  const recoveredAddress = '0x' + ethUtil.pubToAddress(publicKey).toString('hex');
+  try {
+    const prefix = '\x19Ethereum Signed Message:\n' + String(signature.length);
+    const prefixedMessage = ethUtil.keccak(Buffer.from(prefix + signature));
+    const { v, r, s } = ethUtil.fromRpcSig(signature);
+    const publicKey = ethUtil.ecrecover(prefixedMessage, v, r, s);
+    const recoveredAddress = '0x' + ethUtil.pubToAddress(publicKey).toString('hex');
 
-  // Compare the recovered address with the provided Ethereum address
-  if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
-    // If the Ethereum address matches the recovered address, authentication is successful
-    return res.status(200).json({ authenticated: true, user: address });
-  } else {
-    // If the addresses do not match, authentication fails
-    return res.status(401).json({ error: 'Authentication failed' });
+    // Compare the recovered address with the provided Ethereum address
+    if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+      // If the Ethereum address matches the recovered address, authentication is successful
+      return res.status(200).json({ authenticated: true, user: address });
+    } else {
+      // If the addresses do not match, authentication fails
+      return res.status(401).json({ error: 'Authentication failed' });
+    }
+  } catch (error) {
+    console.error('Error verifying signature:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

@@ -11,7 +11,7 @@ const Navigation = ({ account, setAccount }) => {
             const userAddress = accounts[0];
     
             // Define the message to be signed
-            const message = `${userAddress.length}${userAddress}`;
+            const message = `\x19Ethereum Signed Message:\n${userAddress.length}${userAddress}`;
 
             // Prompt user to sign the message
             const signature = await window.ethereum.request({
