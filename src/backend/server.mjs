@@ -3,8 +3,10 @@ import { create } from 'ipfs-http-client';
 import multer from 'multer';
 import bodyParser from 'body-parser';
 import ethUtil from 'ethereumjs-util'; 
-
-
+import fs from 'fs';
+import Counter from './services/countservice.js';
+// const fs = require('fs');
+let fileCount = 4;
 const app = express();
 const ipfs = await create({ host: '127.0.0.1', port: 5001, protocol: 'http' });
 
@@ -48,14 +50,28 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
         sqft: formData.sqft,
       },
     };
-
     // Convert the property data to a JSON string
     const data = JSON.stringify(propertyData);
-
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
     console.log(cid);
+    //const fs = require('fs');
+    const directory = '../../metadata/';
+    //Counter.add();
+    //const filename = Counter.count + '.json';
+    const filename = fileCount + '.json';
+    fileCount++;
 
+
+    // Construct the full file path
+    const filePath = directory + filename;
+    fs.writeFile(filePath, data, (err) => {
+      if (err) {
+        console.error('Error writing file:', err);
+        return;
+      }
+      console.log('File successfully written to:', filePath);
+    });
     // Send the CID as response
     res.json({ cid: cid.toString() });
   } catch (error) {
@@ -72,7 +88,6 @@ app.post('/authenticate', (req, res) => {
   if (!isValidAddress(address)) {
     return res.status(400).json({ error: 'Invalid Ethereum address' });
   }
-
   // Verify the signature
   try {
     const prefix = '\x19Ethereum Signed Message:\n' + String(signature.length);
