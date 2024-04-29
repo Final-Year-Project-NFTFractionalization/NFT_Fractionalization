@@ -79,40 +79,40 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
 });
 
 // Route to authenticate users
-app.post('/authenticate', (req, res) => {
-  const { address, signature } = req.body;
+// app.post('/authenticate', (req, res) => {
+//   const { address, signature } = req.body;
 
-  // Validate the Ethereum address format
-  if (!isValidAddress(address)) {
-    return res.status(400).json({ error: 'Invalid Ethereum address' });
-  }
-  // Verify the signature
-  try {
-    const prefix = '\x19Ethereum Signed Message:\n' + String(signature.length);
-    const prefixedMessage = ethUtil.keccak(Buffer.from(prefix + signature));
-    const { v, r, s } = ethUtil.fromRpcSig(signature);
-    const publicKey = ethUtil.ecrecover(prefixedMessage, v, r, s);
-    const recoveredAddress = '0x' + ethUtil.pubToAddress(publicKey).toString('hex');
+//   // Validate the Ethereum address format
+//   if (!isValidAddress(address)) {
+//     return res.status(400).json({ error: 'Invalid Ethereum address' });
+//   }
+//   // Verify the signature
+//   try {
+//     const prefix = '\x19Ethereum Signed Message:\n' + String(signature.length);
+//     const prefixedMessage = ethUtil.keccak(Buffer.from(prefix + signature));
+//     const { v, r, s } = ethUtil.fromRpcSig(signature);
+//     const publicKey = ethUtil.ecrecover(prefixedMessage, v, r, s);
+//     const recoveredAddress = '0x' + ethUtil.pubToAddress(publicKey).toString('hex');
 
-    // Compare the recovered address with the provided Ethereum address
-    if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
-      // If the Ethereum address matches the recovered address, authentication is successful
-      return res.status(200).json({ authenticated: true, user: address });
-    } else {
-      // If the addresses do not match, authentication fails
-      return res.status(401).json({ error: 'Authentication failed' });
-    }
-  } catch (error) {
-    console.error('Error verifying signature:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+//     // Compare the recovered address with the provided Ethereum address
+//     if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
+//       // If the Ethereum address matches the recovered address, authentication is successful
+//       return res.status(200).json({ authenticated: true, user: address });
+//     } else {
+//       // If the addresses do not match, authentication fails
+//       return res.status(401).json({ error: 'Authentication failed' });
+//     }
+//   } catch (error) {
+//     console.error('Error verifying signature:', error);
+//     return res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
-// Function to validate Ethereum address format
-function isValidAddress(address) {
-  // Basic validation which checks the format of the Ethereum address verifying its correctness
-  return typeof address === 'string' && /^0x[a-fA-F0-9]{40}$/.test(address);
-}
+// // Function to validate Ethereum address format
+// function isValidAddress(address) {
+//   // Basic validation which checks the format of the Ethereum address verifying its correctness
+//   return typeof address === 'string' && /^0x[a-fA-F0-9]{40}$/.test(address);
+// }
 
 // Start the server
 const PORT = 3002; // Choose any available port
