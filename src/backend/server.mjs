@@ -4,26 +4,327 @@ import multer from 'multer';
 import bodyParser from 'body-parser';
 import ethUtil from 'ethereumjs-util'; 
 import fs from 'fs';
+import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
 
 const app = express();
-const ipfs = await create({ host: '127.0.0.1', port: 5001, protocol: 'http' });
 
 // Middleware to parse JSON requests
 app.use(bodyParser.json({ limit: '50mb' })); // Increase payload size limit
-
-// Middleware to add CORS headers
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT');
-  res.header('Access-Control-Allow-Headers', 'Content-Type'); 
-  next();
-});
 
 // Configure Multer for handling file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Endpoint to add data to IPFS
+// Initialize IPFS client
+const ipfs = create({ host: '127.0.0.1', port: 5001, protocol: 'http' });
+
+// Initialize Ethereum provider and signer
+const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545'); // Update with your Ethereum node URL
+const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // Update with your private key
+const wallet = new ethers.Wallet(privateKey, provider);
+
+// Load the ABI and address of your smart contract
+ const contractABI = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_nftAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_lender",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_inspector",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "_seller",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "approval",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_nftID",
+        "type": "uint256"
+      }
+    ],
+    "name": "approveSale",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_nftID",
+        "type": "uint256"
+      }
+    ],
+    "name": "depositEarnest",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "escrowAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_nftID",
+        "type": "uint256"
+      }
+    ],
+    "name": "finalizeSale",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "inspectionPassed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "inspector",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "isListed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "lender",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_nftID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_buyer",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_purchasePrice",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_escrowAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "list",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nftAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "purchasePrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "seller",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_nftID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_passed",
+        "type": "bool"
+      }
+    ],
+    "name": "updateInspectionStatus",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]//my contract's abi pasted/////Can do this in a better way but just working on functionality for now
+const contractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'; // Update with your contract's address
+const contract = new ethers.Contract(contractAddress, contractABI, wallet);
+
+// Endpoint to add data to IPFS and run smart contract function
 app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
   try {
     const formData = req.body; // Retrieve form data from request body
@@ -33,7 +334,6 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
 
     // Add the image buffer to IPFS
     const imageCID = await ipfs.add(imageBuffer);
-    console.log(imageCID);
 
     // Prepare the JSON object with the desired structure, including the image CID
     const propertyData = {
@@ -48,71 +348,24 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
         sqft: formData.sqft,
       },
     };
+
     // Convert the property data to a JSON string
     const data = JSON.stringify(propertyData);
+
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
-    console.log(cid);
-    //const fs = require('fs');
-    const directory = '../../metadata/';
-    //Counter.add();
-    //const filename = Counter.count + '.json';
-    const filename = fileCount + '.json';
-    fileCount++;
 
+    // Run the list function of the smart contract
+    const tx = await contract.list(propertyData.name, propertyData.address, propertyData.description, imageCID.path, formData.bath, formData.beds, formData.price, formData.sqft);
+    await tx.wait(); // Wait for transaction to be mined
 
-    // Construct the full file path
-    const filePath = directory + filename;
-    fs.writeFile(filePath, data, (err) => {
-      if (err) {
-        console.error('Error writing file:', err);
-        return;
-      }
-      console.log('File successfully written to:', filePath);
-    });
     // Send the CID as response
     res.json({ cid: cid.toString() });
   } catch (error) {
-    console.error('Error adding data to IPFS:', error);
+    console.error('Error adding data to IPFS or running smart contract function:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-// Route to authenticate users
-// app.post('/authenticate', (req, res) => {
-//   const { address, signature } = req.body;
-
-//   // Validate the Ethereum address format
-//   if (!isValidAddress(address)) {
-//     return res.status(400).json({ error: 'Invalid Ethereum address' });
-//   }
-//   // Verify the signature
-//   try {
-//     const prefix = '\x19Ethereum Signed Message:\n' + String(signature.length);
-//     const prefixedMessage = ethUtil.keccak(Buffer.from(prefix + signature));
-//     const { v, r, s } = ethUtil.fromRpcSig(signature);
-//     const publicKey = ethUtil.ecrecover(prefixedMessage, v, r, s);
-//     const recoveredAddress = '0x' + ethUtil.pubToAddress(publicKey).toString('hex');
-
-//     // Compare the recovered address with the provided Ethereum address
-//     if (recoveredAddress.toLowerCase() === address.toLowerCase()) {
-//       // If the Ethereum address matches the recovered address, authentication is successful
-//       return res.status(200).json({ authenticated: true, user: address });
-//     } else {
-//       // If the addresses do not match, authentication fails
-//       return res.status(401).json({ error: 'Authentication failed' });
-//     }
-//   } catch (error) {
-//     console.error('Error verifying signature:', error);
-//     return res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-// // Function to validate Ethereum address format
-// function isValidAddress(address) {
-//   // Basic validation which checks the format of the Ethereum address verifying its correctness
-//   return typeof address === 'string' && /^0x[a-fA-F0-9]{40}$/.test(address);
-// }
 
 // Start the server
 const PORT = 3002; // Choose any available port

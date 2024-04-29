@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../css/PropertyListingform.css';
 import axios from 'axios';
 
+
 const PropertyListingform = () => {
   const [listing, setListing] = useState({
     name: '',
@@ -50,7 +51,7 @@ const PropertyListingform = () => {
       const response = await axios.post('http://localhost:3002/addDataToIPFS', formData);
 
       // Extract CID from response
-      const cid = response.data.cid;
+      const cid = response.data.cid; 
 
       // Handle the CID as needed (e.g., store it in a database, display it to the user)
       console.log('IPFS CID:', cid);
