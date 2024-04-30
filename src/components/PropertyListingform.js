@@ -37,7 +37,9 @@ const PropertyListingform = () => {
   
     try{
       // Make a request to the Node.js script to add data to IPFS
+      
       const response = await axios.post('http://localhost:3002/addDataToIPFS', listing);
+      //change port back to 3002 for original
 
       //extract cid from response
       const cid = response.data.cid;

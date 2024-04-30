@@ -1,8 +1,10 @@
 import express from 'express';
 import { create } from 'ipfs-http-client';
+//import fs from 'fs/promises'; // Use fs promises API for asynchronous file operations
 
 const app = express();
 const ipfs = await create({ host: '127.0.0.1', port: 5001, protocol: 'http' });
+//const fs = require('fs');
 
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -42,11 +44,27 @@ app.post('/addDataToIPFS', async (req, res) => {
     };
 
     // Convert the property data to a JSON string
-    const data = JSON.stringify(propertyData);
+    const fs = require('fs'); // Import the 'fs' module
 
+    const data = JSON.stringify(propertyData);
+    const directory = 'C://Software Codes//FYP//NFT_Fractionalization//metadata//'; // Note: Added double slashes at the end
+    const filename = '4.json';
+    const path = directory + filename;
+    
+    fs.writeFile(path, data, (err) => {
+      if (err) {
+        console.error('Error writing file:', err);
+        return;
+      }
+      console.log('File successfully written to:', path); // Changed 'filePath' to 'path'
+    });
+
+
+    
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
     console.log(cid);
+
 
     // Send the CID as response
     res.json({ cid: cid.toString() });
