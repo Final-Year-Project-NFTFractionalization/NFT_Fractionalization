@@ -18,6 +18,9 @@ contract RealEstate is ERC721URIStorage {
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
+        // Emit Transfer event to track ownership change
+        emit Transfer(address(0), msg.sender, newItemId);
+
         return newItemId;
     }
 

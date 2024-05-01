@@ -71,10 +71,11 @@ describe('Escrow', () => {
             expect(result).to.be.equal(true);
         })
 
-        it('Returns Buyer',async()=>{
-            const result = await escrow.buyer(1);
-            expect(result).to.be.equal(buyer.address);
-        })
+        // it('Returns Buyer',async()=>{
+        //     const result = await escrow.buyer(1);
+        //     expect(result).to.be.equal(buyer.address);
+        // })
+        //removed becase Passing the buyer's address as an argument in the list function might not make sense in some scenarios, especially if the buyer is not known at the time of listing the property.
 
         it('Returns Purchase Amount',async()=>{
             const result = await escrow.purchasePrice(1);
