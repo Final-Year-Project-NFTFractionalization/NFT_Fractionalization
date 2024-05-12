@@ -610,11 +610,6 @@ const realEstateContract = new ethers.Contract(realEstateContractAddress, realEs
         "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "_buyer",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "_purchasePrice",
         "type": "uint256"
@@ -732,13 +727,20 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     const mintTx = await realEstateContract.mint(cid.toString());
     await mintTx.wait(); // Wait for NFT minting transaction to be mined
 
+   
+    const price = parseInt(formData.price);    // Convert formData.price to an integer
+    // Check if the conversion was successful
+    if (isNaN(price)) {
+      throw new Error("Invalid price value: formData.price is not a valid number");
+    }
+      
     // Call the list function of the Escrow contract
-    const listTx = await escrowContract.list(
-      mintTx.events.Transfer.returnValues.tokenId, // NFT ID minted by the seller
-      formData.purchasePrice,
-      formData.escrowAmount
+     const listTx = await escrowContract.list(
+      2, // NFT ID minted by the seller
+      price,
+      price
     );
-    await listTx.wait(); // Wait for listing transaction to be mined
+    await listTx.wait(); // Wait for listing transaction to Lisbe mined
 
     // Send the CID as response
     res.json({ cid: cid.toString() });
