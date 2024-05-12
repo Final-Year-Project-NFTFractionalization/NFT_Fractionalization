@@ -62,10 +62,10 @@ contract Escrow {
         uint256 _purchasePrice,
         uint256 _escrowAmount
     ) public payable onlySeller {
-        //create an instance of the ERC721 contract located at address 'nftAddress'
-        //seller listing function and it's address captured through msg.sender
-        //this nft address that seller has now is stored in this smart contract address until a purchase made
-        //_nftID passed
+            //create an instance of the ERC721 contract located at address 'nftAddress'
+            //seller listing function and it's address captured through msg.sender
+            //this nft address that seller has now is stored in this smart contract address until a purchase made
+            //_nftID passed
         IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID);
 
         isListed[_nftID] = true;
