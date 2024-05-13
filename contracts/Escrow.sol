@@ -58,7 +58,7 @@ contract Escrow {
         //seller listing function and it's address captured through msg.sender
         //this nft address that seller has now is stored in this smart contract address until a purchase made
         //_nftID passed
-        IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID); //Transfer the nft from seller to this contract
+        IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID);
 
         isListed[_nftID] = true;
         purchasePrice[_nftID] = _purchasePrice;
