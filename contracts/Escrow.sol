@@ -29,13 +29,6 @@ contract Escrow {
         _;
     }
 
-    event PropertyListed(
-        uint256 indexed nftID,
-        address indexed buyer,
-        uint256 purchasePrice,
-        uint256 escrowAmount
-    );
-
     mapping(uint256 => bool) public isListed;
     mapping(uint256 => uint256) public purchasePrice;
     mapping(uint256 => uint256) public escrowAmount;
@@ -58,7 +51,6 @@ contract Escrow {
     //Listing properties on our website
     function list(
         uint256 _nftID,
-        address _seller,
         uint256 _purchasePrice,
         uint256 _escrowAmount
     ) public payable onlySeller {
@@ -69,11 +61,8 @@ contract Escrow {
         IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID);
 
         isListed[_nftID] = true;
-        buyer[_nftID] = _seller;
         purchasePrice[_nftID] = _purchasePrice;
         escrowAmount[_nftID] = _escrowAmount;
-
-        // emit PropertyListed(_nftID, _buyer, _purchasePrice, _escrowAmount);
     }
 
     function depositEarnest(uint256 _nftID) public payable onlyBuyer(_nftID) {

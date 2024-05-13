@@ -67,10 +67,19 @@ const PropertyListingform = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      try {
-        // Make a request to the Node.js script to add data to IPFS
-        const response = await axios.post('http://localhost:3002/addDataToIPFS', listing);
+    try {
+      const formData = new FormData();
+      formData.append('name', listing.name);
+      formData.append('description', listing.description);
+      formData.append('image', listing.image);
+      formData.append('price', listing.price);
+      formData.append('beds', listing.beds);
+      formData.append('bath', listing.bath);
+      formData.append('sqft', listing.sqft);
+      formData.append('address', listing.address);
+
+      // Make a request to the Node.js script to add data to IPFS
+      const response = await axios.post('http://localhost:3002/addDataToIPFS', formData);
 
         // Extract cid from response
         const cid = response.data.cid;
