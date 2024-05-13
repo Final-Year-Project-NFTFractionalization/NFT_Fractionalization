@@ -8,8 +8,8 @@ import Home from './Home';
 import PropertyListingform from './PropertyListingform';
 
 // ABIs
-import RealEstate from './RealEstate.json'
-import Escrow from './abis/Escrow.json'
+import RealEstate from '../abis/RealEstate.json'
+import Escrow from '../abis/Escrow.json'
 
 // Config
 import config from './config.json';

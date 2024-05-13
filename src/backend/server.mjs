@@ -7,7 +7,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
-
+import path from 'path';
 const app = express();
 let fileCount = 5;
 // Middleware to parse JSON requests
@@ -792,12 +792,32 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     const directory = '../../metadata/';
     //Counter.add();
     //const filename = Counter.count + '.json';
-    const filename = fileCount + '.json';
-    fileCount++;
-
+    
+    //filename and number
+    function countFiles(directory) {
+      let count = 0;
+  
+      function traverse(dir) {
+          const files = fs.readdirSync(dir);
+          files.forEach(file => {
+              const filePath = path.join(dir, file);
+              const stat = fs.statSync(filePath);
+              if (stat.isDirectory()) {
+                  traverse(filePath);
+              } else {
+                  count++;
+              }
+          });
+      }
+  
+      traverse(directory);
+      return count+1;
+  }
+        let counteroffiles= countFiles(directory);
+    
 
     // Construct the full file path
-    const filePath = directory + filename;
+    const filePath = directory + counteroffiles + '.json';
     fs.writeFile(filePath, data, (err) => {
       if (err) {
         console.error('Error writing file:', err);
