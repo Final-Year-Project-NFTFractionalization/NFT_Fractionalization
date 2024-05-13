@@ -11,16 +11,17 @@ const app = express();
 // Middleware to parse JSON requests
 app.use(bodyParser.json({ limit: '50mb' })); // Increase payload size limit
 
-// Configure Multer for handling file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT');
   res.header('Access-Control-Allow-Headers', 'Content-Type'); 
   next();
 });
+
+
+// Configure Multer for handling file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Initialize IPFS client
 const ipfs = create({ host: '127.0.0.1', port: 5001, protocol: 'http' });
