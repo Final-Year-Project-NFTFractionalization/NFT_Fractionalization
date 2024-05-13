@@ -4,6 +4,8 @@ import multer from 'multer';
 import bodyParser from 'body-parser';
 import ethUtil from 'ethereumjs-util'; 
 import fs from 'fs';
+import crypto from 'crypto';
+import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
 
 const app = express();
@@ -725,8 +727,80 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       },
     };
 
+    console.log("assigned add obj");
+    const filePath="../../Sample.xlsx";
+
+function generateHashFromAddress(address) {
+  console.log("generatehashfx");
+  // Split the address string into components
+  const [houseNumber, street, area] = address.split(' ');
+  // Concatenate the components (you may adjust this based on your requirement)
+  const concatenatedString = `${houseNumber}${street}${area}`;
+  // Generate a hash from the concatenated string
+  const hash = crypto.createHash('sha256').update(concatenatedString).digest('hex');
+  return hash;
+}
+function extractHashesFromExcel(filePath) {
+  console.log("extractfromexcelfx");
+    // Load workbook from file
+  const workbook = xlsx.readFile(filePath);
+    // Get the first worksheet
+  const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    // Extract addresses from the first column (assuming addresses are in column A)
+  const addresses = [];
+  for (let i = 1; ; i++) {
+    const cell = worksheet[`A${i}`];
+    if (!cell || !cell.v) break; // Stop if the cell is empty
+    addresses.push(cell.v);
+  }
+  // Extract hashes from addresses
+  //const hashes = addresses.map(address => generateHashFromAddress(address));
+  return addresses;
+}function checkHashInExcel(address, filePath) {
+  console.log("checkhashinexcel");
+
+  const hashToCheck = generateHashFromAddress(address);
+  console.log(hashToCheck);
+    const hashesInExcel = extractHashesFromExcel(filePath);
+  if(hashesInExcel.includes(hashToCheck))
+    {
+        console.log(hashToCheck);
+        console.log("hash found");
+        return true;
+    }
+  else {
+    console.log(hashToCheck);
+    console.log("hash not found");
+    return false;}
+}
+    async function verifyproperty(address) {
+      console.log("inverifyproperty ");
+
+      if(propertyData.address)
+      {
+        const resadress= generateHashFromAddress(address);
+        const result = checkHashInExcel(resadress, filePath);
+        if(result)
+        {
+          console.log("Property is verified");
+          return true;
+        }
+        else{
+          console.log("Property is not verified");
+          return false;
+        }
+      }
+      return resultofverification;
+  }
     // Convert the property data to a JSON string
     const data = JSON.stringify(propertyData);
+    console.log("called the api of verify property");
+
+    const resultofverification= verifyproperty(propertyData.address);
+    console.log("called the api of verify property successfuly");
+
+    // // Convert the property data to a JSON string
+    // const data = JSON.stringify(propertyData);
 
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
