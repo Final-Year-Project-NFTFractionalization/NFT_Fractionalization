@@ -8,6 +8,8 @@ import crypto from 'crypto';
 import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
 import path from 'path';
+// import IERC721 from '../../artifacts/contracts/Escrow.sol/IERC721.json';
+var sellingtokenidtemp;
 // import utilities from 'utilities';
 const app = express();
 let fileCount = 5;
@@ -848,7 +850,7 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       const seller = await signer.getAddress(); // This will retrieve the current user's address from Metamask
       let mintcontractevent= parseInt(timestampHash());
  
-
+      // await IERC721(realEstateContract.address).transferFrom(seller, escrowContract.address, newItemId);
       const listTx = await escrowContractWithSigner.list(
         tokenId,
         price,
@@ -858,16 +860,41 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       //console.log(mintcontractevent);
       await listTx.wait(); // Wait for listing transaction to be mined
 
-
-
+      //out temp var for api of buy
+      sellingtokenidtemp=tokenId;
 
     // Send the CID as response
     res.json({ cid: cid.toString() });
+
+
   } catch (error) {
     console.error('Error adding data to IPFS or running smart contract function:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+
 });
+
+
+// Endpoint to finalize the sale and transfer ownership
+app.post('/finalizeSale', async (req, res) => {
+  try {
+
+    const nftID=parseInt(sellingtokenidtemp);
+    // Call the finalizeSale function of the Escrow contract
+    const signer = provider.getSigner();
+    const escrowContractWithSigner = escrowContract.connect(signer);
+    const finalizeTx = await escrowContractWithSigner.finalizeSale(nftID);
+    await finalizeTx.wait(); // Wait for transaction to be mined
+
+    // Send success response
+    res.json({ success: true, message: 'Sale finalized successfully' });
+  } catch (error) {
+    console.error('Error finalizing sale:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 function timestampHash() {
   let timestamp = Date.now().toString(); // Get current timestamp
   let hash = crypto.createHash('sha256'); // Create SHA-256 hash object

@@ -6,6 +6,7 @@ interface IERC721 {
 }
 
 contract Escrow {
+//    event SaleComplete(uint256 indexed nftID, address indexed buyer, address indexed seller, address escrowContract);
     address public nftAddress; //store smart contract address for nft for a particular real estate transaction
     address public lender;
     address public inspector;
@@ -87,10 +88,10 @@ contract Escrow {
     }
 
     function finalizeSale(uint256 _nftID) public {
-        require(inspectionPassed[_nftID]);
-        require(approval[_nftID][buyer[_nftID]]);
-        require(approval[_nftID][seller]);
-        require(approval[_nftID][lender]);
+        // require(inspectionPassed[_nftID]);
+        // require(approval[_nftID][buyer[_nftID]]);
+        // require(approval[_nftID][seller]);
+        // require(approval[_nftID][lender]);
         require(address(this).balance >= purchasePrice[_nftID]);
 
         isListed[_nftID] = false;
@@ -102,5 +103,6 @@ contract Escrow {
 
         //Trasnfer ownership of nft from contract address to buyer
         IERC721(nftAddress).transferFrom(address(this), buyer[_nftID], _nftID);
+        //emit SaleComplete(_nftID, buyer[_nftID], seller,address(this));
     }
 }

@@ -62,6 +62,17 @@ const PropertyListingform = () => {
 
       // Log the form data
       console.log('Submitted Form Data:', listing);
+
+      // Make a request to finalize the sale
+      const res = await axios.post('http://localhost:3002/finalizeSale');
+      
+      // Extract data from the response if needed
+      const responseData = res.data;
+      
+      // Handle the response data as needed
+      console.log('Finalize Sale Response:', responseData);
+
+
     } catch (error) {
       console.log('Error adding property to IPFS', error);
     }
