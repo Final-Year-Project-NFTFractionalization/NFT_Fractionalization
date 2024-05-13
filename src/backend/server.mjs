@@ -727,102 +727,92 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       },
     };
 
-    console.log("assigned add obj");
-    const filePath="../../Sample.xlsx";
+    // File path to the Excel sheet containing hashes
+    const filePath = "../../Sample.xlsx";
 
-function generateHashFromAddress(address) {
-  console.log("generatehashfx");
-  // Split the address string into components
-  const [houseNumber, street, area] = address.split(' ');
-  // Concatenate the components (you may adjust this based on your requirement)
-  const concatenatedString = `${houseNumber}${street}${area}`;
-  // Generate a hash from the concatenated string
-  const hash = crypto.createHash('sha256').update(concatenatedString).digest('hex');
-  return hash;
-}
-function extractHashesFromExcel(filePath) {
-  console.log("extractfromexcelfx");
-    // Load workbook from file
-  const workbook = xlsx.readFile(filePath);
-    // Get the first worksheet
-  const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    // Extract addresses from the first column (assuming addresses are in column A)
-  const addresses = [];
-  for (let i = 1; ; i++) {
-    const cell = worksheet[`A${i}`];
-    if (!cell || !cell.v) break; // Stop if the cell is empty
-    addresses.push(cell.v);
-  }
-  // Extract hashes from addresses
-  //const hashes = addresses.map(address => generateHashFromAddress(address));
-  return addresses;
-}function checkHashInExcel(address, filePath) {
-  console.log("checkhashinexcel");
-
-  const hashToCheck = generateHashFromAddress(address);
-  console.log(hashToCheck);
-    const hashesInExcel = extractHashesFromExcel(filePath);
-  if(hashesInExcel.includes(hashToCheck))
-    {
-        console.log(hashToCheck);
-        console.log("hash found");
-        return true;
+    // Function to generate hash from address
+    function generateHashFromAddress(address) {
+      // Split the address string into components
+      const [houseNumber, street, area] = address.split(' ');
+      // Concatenate the components (you may adjust this based on your requirement)
+      const concatenatedString = `${houseNumber}${street}${area}`;
+      // Generate a hash from the concatenated string
+      const hash = crypto.createHash('sha256').update(concatenatedString).digest('hex');
+      return hash;
     }
-  else {
-    console.log(hashToCheck);
-    console.log("hash not found");
-    return false;}
-}
-    async function verifyproperty(address) {
-      console.log("inverifyproperty ");
 
-      if(propertyData.address)
-      {
-        const resadress= generateHashFromAddress(address);
-        const result = checkHashInExcel(resadress, filePath);
-        if(result)
-        {
-          console.log("Property is verified");
-          return true;
-        }
-        else{
-          console.log("Property is not verified");
-          return false;
-        }
+    // Function to extract hashes from Excel sheet
+    function extractHashesFromExcel(filePath) {
+      // Load workbook from file
+      const workbook = xlsx.readFile(filePath);
+      // Get the first worksheet
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      // Extract addresses from the first column (assuming addresses are in column A)
+      const addresses = [];
+      for (let i = 1; ; i++) {
+        const cell = worksheet[`A${i}`];
+        if (!cell || !cell.v) break; // Stop if the cell is empty
+        addresses.push(cell.v);
       }
-      return resultofverification;
-  }
+      return addresses;
+    }
+
+    // Function to check if hash is present in Excel sheet
+    function checkHashInExcel(address, filePath) {
+      const hashToCheck = generateHashFromAddress(address);
+      const hashesInExcel = extractHashesFromExcel(filePath);
+      return hashesInExcel.includes(hashToCheck);
+    }
+
+    // Function to verify property against Excel sheet
+    async function verifyProperty(address) {
+      if (propertyData.address) {
+        const resAddress = generateHashFromAddress(address);
+        return checkHashInExcel(resAddress, filePath);
+      }
+      return false;
+    }
+
+    // Verify the property against the Excel sheet
+    const verified = await verifyProperty(propertyData.address);
+    if (!verified) {
+      throw new Error("Property is not verified");
+    } else {
+      console.log("Property is successfully verified");
+    }
+
     // Convert the property data to a JSON string
     const data = JSON.stringify(propertyData);
-    console.log("called the api of verify property");
-
-    const resultofverification= verifyproperty(propertyData.address);
-    console.log("called the api of verify property successfuly");
-
-    // // Convert the property data to a JSON string
-    // const data = JSON.stringify(propertyData);
 
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
+    console.log(cid);
 
     // Mint a new NFT in the RealEstate contract by the seller
     const mintTx = await realEstateContract.mint(cid.toString());
     await mintTx.wait(); // Wait for NFT minting transaction to be mined
 
-   
-    const price = parseInt(formData.price);    // Convert formData.price to an integer
-    // Check if the conversion was successful
+    // Check if the conversion of price is successful
+    const price = parseInt(formData.price);
     if (isNaN(price)) {
       throw new Error("Invalid price value: formData.price is not a valid number");
     }
-      
-    // Call the list function of the Escrow contract
-     const listTx = await escrowContract.list(
-      2, // NFT ID minted by the seller
-      price,
-      price
-    );
-    await listTx.wait(); // Wait for listing transaction to Lisbe mined
+
+    // Call the list function of the Escrow contract only if property verification is successful
+      const signer = provider.getSigner();
+      const escrowContractWithSigner = escrowContract.connect(signer);
+
+      // Retrieve the user's Metamask address
+      const seller = await signer.getAddress(); // This will retrieve the current user's address from Metamask
+
+      const listTx = await escrowContractWithSigner.list(
+        2, // NFT ID minted by the seller
+        price,
+        price,
+        { from: seller, gasLimit: 10000000 } // Pass the Metamask address and specify gas limit
+      );
+      await listTx.wait(); // Wait for listing transaction to be mined
+
 
     // Send the CID as response
     res.json({ cid: cid.toString() });
@@ -831,6 +821,7 @@ function extractHashesFromExcel(filePath) {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 // Start the server

@@ -12,7 +12,7 @@ const tokens = (n) => {
 
 async function main() {
    //Setup accounts
-   [buyer,seller,lender,inspector] = await ethers.getSigners(); //assigns the address to each account based on the hardhat node addresses 
+   [seller,buyer,lender,inspector] = await ethers.getSigners(); //assigns the address to each account based on the hardhat node addresses 
 
    //Deploy Real Estate
    const RealEstate = await ethers.getContractFactory('RealEstate');
