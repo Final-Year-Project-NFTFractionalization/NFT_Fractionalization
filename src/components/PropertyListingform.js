@@ -48,7 +48,11 @@ const PropertyListingform = () => {
       formData.append('address', listing.address);
 
       // Make a request to the Node.js script to add data to IPFS
-      const response = await axios.post('http://localhost:3002/addDataToIPFS', listing);
+    const response = await axios.post('http://localhost:3002/addDataToIPFS', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    });
 
       // Extract CID from response
       const cid = response.data.cid; 
