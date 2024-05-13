@@ -9,7 +9,7 @@ import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
 
 const app = express();
-
+let fileCount = 5;
 // Middleware to parse JSON requests
 app.use(bodyParser.json({ limit: '50mb' })); // Increase payload size limit
 
@@ -728,7 +728,7 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     };
 
     // File path to the Excel sheet containing hashes
-    const filePath = "../../Sample.xlsx";
+    const filePathexcel = "../../Sample.xlsx";
 
     // Function to generate hash from address
     function generateHashFromAddress(address) {
@@ -742,9 +742,9 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     }
 
     // Function to extract hashes from Excel sheet
-    function extractHashesFromExcel(filePath) {
+    function extractHashesFromExcel(filePathexcel) {
       // Load workbook from file
-      const workbook = xlsx.readFile(filePath);
+      const workbook = xlsx.readFile(filePathexcel);
       // Get the first worksheet
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       // Extract addresses from the first column (assuming addresses are in column A)
@@ -758,9 +758,9 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     }
 
     // Function to check if hash is present in Excel sheet
-    function checkHashInExcel(address, filePath) {
+    function checkHashInExcel(address, filePathexcel) {
       const hashToCheck = generateHashFromAddress(address);
-      const hashesInExcel = extractHashesFromExcel(filePath);
+      const hashesInExcel = extractHashesFromExcel(filePathexcel);
       return hashesInExcel.includes(hashToCheck);
     }
 
@@ -768,7 +768,7 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     async function verifyProperty(address) {
       if (propertyData.address) {
         const resAddress = generateHashFromAddress(address);
-        return checkHashInExcel(resAddress, filePath);
+        return checkHashInExcel(resAddress, filePathexcel);
       }
       return false;
     }
@@ -787,7 +787,22 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
     console.log(cid);
+    const directory = '../../metadata/';
+    //Counter.add();
+    //const filename = Counter.count + '.json';
+    const filename = fileCount + '.json';
+    fileCount++;
 
+
+    // Construct the full file path
+    const filePath = directory + filename;
+    fs.writeFile(filePath, data, (err) => {
+      if (err) {
+        console.error('Error writing file:', err);
+        return;
+      }
+      console.log('File successfully written to:', filePath);
+    }); 
     // Mint a new NFT in the RealEstate contract by the seller
     const mintTx = await realEstateContract.mint(cid.toString());
     await mintTx.wait(); // Wait for NFT minting transaction to be mined
