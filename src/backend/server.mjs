@@ -785,6 +785,8 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     }
 
     // Convert the property data to a JSON string
+    const fs = require('fs'); // Import the 'fs' module
+
     const data = JSON.stringify(propertyData);
 
     // Add the JSON string to IPFS

@@ -19,10 +19,10 @@ const connectHandler = async()=>{
            <Link className="nav_a_tag" to="/" 
            tag="a" action>Home</Link> 
         </li>
-         {/* <li> 
-        <Link className="nav_a_tag" to="/" 
-           tag="a" action>Rent</Link>
-        </li>  */}
+         { <li> 
+        <Link className="nav_a_tag" to="/Properties" 
+           tag="a" action>Buy</Link>
+        </li>  }
         <li>
           <Link className="nav_a_tag" to="/PropertyListingform" 
            tag="a" action>Sell</Link>
