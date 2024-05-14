@@ -62,6 +62,8 @@ const loadBlockchainData = async()=>{
 })
 
 }
+
+  
   useEffect(()=>{
     loadBlockchainData()
   },[])

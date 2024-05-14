@@ -843,7 +843,7 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       throw new Error("Invalid price value: formData.price is not a valid number");
     }
 
-    // Call the list function of the Escrow contract only if property verification is successful
+      // Call the list function of the Escrow contract only if property verification is successful
       const signer = provider.getSigner();
       const escrowContractWithSigner = escrowContract.connect(signer);
 
