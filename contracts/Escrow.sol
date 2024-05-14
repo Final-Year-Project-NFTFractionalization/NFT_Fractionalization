@@ -87,10 +87,10 @@ contract Escrow {
     }
 
     function finalizeSale(uint256 _nftID) public {
-        require(inspectionPassed[_nftID]);
-        require(approval[_nftID][buyer[_nftID]]);
-        require(approval[_nftID][seller]);
-        require(approval[_nftID][lender]);
+         require(inspectionPassed[_nftID]);
+         require(approval[_nftID][buyer[_nftID]]);
+         require(approval[_nftID][seller]);
+         require(approval[_nftID][lender]);
         require(address(this).balance >= purchasePrice[_nftID]);
 
         isListed[_nftID] = false;

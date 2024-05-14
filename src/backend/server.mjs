@@ -712,10 +712,11 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
 
     // Add the image buffer to IPFS
     const imageCID = await ipfs.add(imageBuffer);
-
+    console.log(imageCID + "is the image cid of the server");
     // Prepare the JSON object with the desired structure, including the image CID
-    const propertyData = {
+    let propertyData = {
       name: formData.name,
+      PropertyCID: null,
       address: formData.address,
       description: formData.description,
       imageCID: imageCID.path, // Store the CID of the image on IPFS
@@ -782,11 +783,16 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     }
 
     // Convert the property data to a JSON string
-    const data = JSON.stringify(propertyData);
-
+    
+    let data = JSON.stringify(propertyData);
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
     console.log(cid);
+    let propertyDataObject = JSON.parse(data);
+    propertyDataObject.PropertyCID = cid.path;
+    data = JSON.stringify(propertyDataObject);
+
+
     const directory = '../../metadata/';
     //Counter.add();
     //const filename = Counter.count + '.json';
