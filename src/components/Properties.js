@@ -1,3 +1,79 @@
+// import React, { useState, useEffect } from 'react';
+
+// const Properties = () => {
+//   const [properties, setProperties] = useState([]);
+
+//   useEffect(() => {
+//     // Function to fetch JSON files from the metadata folder
+//     const fetchJsonFiles = async () => {
+//       try {
+//         const response = await fetch('/metadata');
+//         const fileList = await response.json();
+//         const jsonFiles = fileList
+//           .filter(file => file.endsWith('.json'))
+//           .filter(file => {
+//             const index = parseInt(file.replace('.json', ''));
+//             return index >= 4; // Start fetching from 4.json
+//           });
+//         const propertiesData = await Promise.all(jsonFiles.map(filename => readJsonFile(filename)));
+//         console.log('Properties Data:', propertiesData); // Log properties data
+//         setProperties(propertiesData);
+//       } catch (error) {
+//         console.error('Error fetching JSON files:', error);
+//         console.log(properties);
+//       }
+//     };
+  
+//     // Function to read a JSON file
+//     const readJsonFile = async (filename) => {
+//       try {
+//         const response = await fetch(`/metadata/${filename}`);
+//         const data = await response.json();
+//         return data;
+//       } catch (error) {
+//         console.error(`Error reading JSON file ${filename}:`, error);
+//         console.log(properties);
+        
+//         return null;
+//       }
+//     };
+  
+//     fetchJsonFiles();
+  
+
+
+//   }, []);
+  
+//   return (
+//     <div>
+//       <h1>Properties</h1>
+//       <div>
+//         {/* Rendering properties */}
+        
+//         {properties.map((property, index) => (
+//           <div key={index}>
+//             <h2>{property.name}</h2>
+//             <p><strong>Address:</strong> {property.address}</p>
+//             <p><strong>Description:</strong> {property.description}</p>
+//             <img src={`https://ipfs.io/ipfs/${property.imageCID}`} alt="Property" />
+//             <p><strong>Attributes:</strong></p>
+//             <ul>
+//               <li><strong>Bath:</strong> {property.attributes.bath}</li>
+//               <li><strong>Beds:</strong> {property.attributes.beds}</li>
+//               <li><strong>Price:</strong> {property.attributes.price}</li>
+//               <li><strong>Sqft:</strong> {property.attributes.sqft}</li>
+//             </ul>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Properties;
+
+// code for first 3 properties
+
 import '../css/Properties.css';
 import axios from 'axios';
 import React, { useState } from 'react';
