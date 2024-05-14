@@ -35,7 +35,7 @@ describe('Escrow', () => {
         await transaction.wait();
 
         //List Property
-        transaction = await escrow.connect(seller).list(1,buyer.address,tokens(10),tokens(5));
+        transaction = await escrow.connect(seller).list(1,tokens(10),tokens(5));
         await transaction.wait();
     })
 

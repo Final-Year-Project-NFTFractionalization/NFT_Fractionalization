@@ -1,5 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
+import "hardhat/console.sol";
+
 
 interface IERC721 {
     function transferFrom(address _from, address _to, uint256 _id) external;
@@ -64,6 +66,7 @@ contract Escrow {
         isListed[_nftID] = true;
         purchasePrice[_nftID] = _purchasePrice;
         escrowAmount[_nftID] = _escrowAmount;
+        console.log("Transferring NFT from %s to %s address",msg.sender,address(this));
     }
 
     function depositEarnest(uint256 _nftID) public payable onlyBuyer(_nftID) {
@@ -103,6 +106,7 @@ contract Escrow {
 
         //Trasnfer ownership of nft from contract address to buyer
         IERC721(nftAddress).transferFrom(address(this), buyer[_nftID], _nftID);
+        console.log("Transferring NFT from %s to %s address",address(this),buyer[_nftID]);
         //emit SaleComplete(_nftID, buyer[_nftID], seller,address(this));
     }
 }
