@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import '../css/PropertyListingform.css';
 import axios from 'axios';
 
@@ -74,6 +76,37 @@ const PropertyListingform = () => {
             'Content-Type': 'multipart/form-data', 
           },
         });
+
+       // Three Swal alerts within 2 seconds
+       setTimeout(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Property verified!',
+          text: 'The property has been verified.',
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }, 0); // Display immediately
+
+      setTimeout(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'NFT minted!',
+          text: 'The NFT has been successfully minted.',
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }, 2000); // Display after 2 seconds
+
+      setTimeout(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Property listed!',
+          text: 'Your property has been successfully listed.',
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }, 4000); // Display after 4 seconds
 
         // Extract cid from response
         const cid = response.data.cid;
