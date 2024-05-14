@@ -8,6 +8,9 @@ import crypto from 'crypto';
 import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
 import path from 'path';
+// import IERC721 from '../../artifacts/contracts/Escrow.sol/IERC721.json';
+var sellingtokenidtemp;
+// import utilities from 'utilities';
 const app = express();
 let fileCount = 5;
 // Middleware to parse JSON requests
@@ -783,8 +786,8 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     }
 
     // Convert the property data to a JSON string
-    
-    let data = JSON.stringify(propertyData);
+    const data = JSON.stringify(propertyData);
+
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
     console.log(cid);
@@ -829,9 +832,15 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       }
       console.log('File successfully written to:', filePath);
     }); 
+
     // Mint a new NFT in the RealEstate contract by the seller
     const mintTx = await realEstateContract.mint(cid.toString());
-    await mintTx.wait(); // Wait for NFT minting transaction to be mined
+    const mintReceipt = await mintTx.wait(); // Wait for NFT minting transaction to be mined
+    const newItemId = mintReceipt.events[0].args[2].toNumber(); // Assuming the event logs the new item ID as the third argument
+    // Retrieve the ID of the minted NFT from the transaction receipt
+    const tokenId = mintReceipt.events[0].args.tokenId.toNumber();
+    console.log(`Minted NFT with ID maybe: ${tokenId}`);
+    //console.log(`Minted NFT with ID maybe: ${mintReceipt.events[0].args.tokenId.toNumber()}`);
 
     // Check if the conversion of price is successful
     const price = parseInt(formData.price);
@@ -845,26 +854,59 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
 
       // Retrieve the user's Metamask address
       const seller = await signer.getAddress(); // This will retrieve the current user's address from Metamask
-
+      let mintcontractevent= parseInt(timestampHash());
+ 
+      // await IERC721(realEstateContract.address).transferFrom(seller, escrowContract.address, newItemId);
       const listTx = await escrowContractWithSigner.list(
-        2, // NFT ID minted by the seller
+        tokenId,
         price,
         price,
         { from: seller, gasLimit: 10000000 } // Pass the Metamask address and specify gas limit
       );
+      //console.log(mintcontractevent);
       await listTx.wait(); // Wait for listing transaction to be mined
 
+      //out temp var for api of buy
+      sellingtokenidtemp=tokenId;
 
     // Send the CID as response
     res.json({ cid: cid.toString() });
+
+
   } catch (error) {
     console.error('Error adding data to IPFS or running smart contract function:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+});
+
+
+// Endpoint to finalize the sale and transfer ownership
+app.post('/finalizeSale', async (req, res) => {
+  try {
+
+    const nftID=parseInt(sellingtokenidtemp);
+    // Call the finalizeSale function of the Escrow contract
+    const signer = provider.getSigner();
+    const escrowContractWithSigner = escrowContract.connect(signer);
+    const finalizeTx = await escrowContractWithSigner.finalizeSale(nftID);
+    await finalizeTx.wait(); // Wait for transaction to be mined
+
+    // Send success response
+    res.json({ success: true, message: 'Sale finalized successfully' });
+  } catch (error) {
+    console.error('Error finalizing sale:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 
-
+function timestampHash() {
+  let timestamp = Date.now().toString(); // Get current timestamp
+  let hash = crypto.createHash('sha256'); // Create SHA-256 hash object
+  hash.update(timestamp); // Update hash with timestamp
+  return hash.digest('hex'); // Get hexadecimal representation of the hash
+}
 // Start the server
 const PORT = 3002; // Choose any available port
 app.listen(PORT, () => {

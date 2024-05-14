@@ -6,6 +6,7 @@ import Navigation from './components/Navigation';
 import Search from './components/Search';
 import Home from './components/Home';
 import PropertyListingform from './components/PropertyListingform';
+import Properties from './components/Properties';
 
 // ABIs
 import RealEstate from './abis/RealEstate.json'
@@ -100,6 +101,8 @@ const loadBlockchainData = async()=>{
         </div>
       </div></div>}></Route>
       <Route path="/PropertyListingform" element={<PropertyListingform />}></Route>
+      <Route path="/Properties" element={<Properties />}></Route>
+
 
     </Routes>
       
