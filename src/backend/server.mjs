@@ -731,12 +731,13 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     // Mint a new NFT in the RealEstate contract by the seller
     const mintTx = await realEstateContract.mint(cid.toString());
     await mintTx.wait(); // Wait for NFT minting transaction to be mined
+    console.log(mintTx);
 
     // Call the list function of the Escrow contract
     const listTx = await escrowContract.list(
-      mintTx.events.Transfer.returnValues.tokenId, // NFT ID minted by the seller
-      formData.purchasePrice,
-      formData.escrowAmount
+      mintTx.hash, // NFT ID minted by the seller
+      formData.purchasePrice, // Purchase price of the property/NFT
+      formData.escrowAmount // Escrow amount for the transaction
     );
     await listTx.wait(); // Wait for listing transaction to be mined
 
