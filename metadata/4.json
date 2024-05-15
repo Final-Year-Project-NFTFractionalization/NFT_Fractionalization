@@ -1,1 +1,9 @@
-{"name":"fdsfdsfds","address":"21dsf","description":"fdsfdsf","imageCID":"Qmdk8D9QMv85Yp9c8Srp5K91ckVLekWkd7sSxZYrhtsPhX","attributes":{"bath":"21","beds":"21","price":"21","sqft":"21"}}
+<<<<<<< HEAD
+{"name":"Munir Jadoon","PropertyCID":"QmQdT9zYkfpum5tJVZv3CvNEc8AwkJZHkkhava4Bo7Ym8m","address":"30 Q-Street Karachi","description":"THis is a property in defence","imageCID":"QmYuZiUEyCryWGY274sJdmvDAUdLgERVLQcVtcjvSz6VUf","attributes":{"bath":"4","beds":"5","price":"10","sqft":"2000"}}
+=======
+{"name":"fdsfdsfds",
+"address":"21dsf",
+"description":"fdsfdsf",
+"imageCID":"Qmdk8D9QMv85Yp9c8Srp5K91ckVLekWkd7sSxZYrhtsPhX",
+"attributes":{"bath":"21","beds":"21","price":"21","sqft":"21"}}
+>>>>>>> b0327df7f078afa0e7580805bc27dc099d8ba0ee

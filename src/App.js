@@ -6,6 +6,7 @@ import Navigation from './components/Navigation';
 import Search from './components/Search';
 import Home from './components/Home';
 import PropertyListingform from './components/PropertyListingform';
+import Properties from './components/Properties';
 
 // ABIs
 import RealEstate from './abis/RealEstate.json'
@@ -41,21 +42,17 @@ const loadBlockchainData = async()=>{
 
     for(var i=1 ; i <= totalSupply; i++){
       const uri = await realEstate.tokenURI(i)
-      const response = await fetch(uri)
+      const response = await fetch(uri) 
       const metadata = await response.json()
       homes.push(metadata)
     }
     setHomes(homes)
     console.log(homes)
-    
   const escrow= new ethers.Contract(config[network.chainId].escrow.address ,Escrow, provider)
   setEscrow(escrow)
-
-
   window.ethereum.on('accountsChanged',async()=>{
   const accounts = await window.ethereum.request({ method:'eth_requestAccounts'});
   const account=ethers.utils.getAddress(accounts[0])
-
   setAccount(account);
 
 })
@@ -102,6 +99,8 @@ const loadBlockchainData = async()=>{
         </div>
       </div></div>}></Route>
       <Route path="/PropertyListingform" element={<PropertyListingform />}></Route>
+      <Route path="/Properties" element={<Properties />}></Route>
+
 
     </Routes>
       
@@ -116,3 +115,4 @@ const loadBlockchainData = async()=>{
 }
 
 export default App;
+
