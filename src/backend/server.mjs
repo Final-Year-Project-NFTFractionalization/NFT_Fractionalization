@@ -7,6 +7,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
+<<<<<<< HEAD
 import path from 'path';
 // import IERC721 from '../../artifacts/contracts/Escrow.sol/IERC721.json';
 var sellingtokenidtemp;
@@ -16,14 +17,25 @@ let fileCount = 5;
 // Middleware to parse JSON requests
 app.use(bodyParser.json({ limit: '50mb' })); // Increase payload size limit
 
+=======
+//crypto = require('crypto');
+//const xlsx = require('xlsx');
+const app = express();
+
+// Middleware to parse JSON requests
+app.use(bodyParser.json({ limit: '50mb' })); // Increase payload size limit
+>>>>>>> fc0da639a9273b7b3021dcc5ad88cefd5c0de990
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT');
   res.header('Access-Control-Allow-Headers', 'Content-Type'); 
   next();
 });
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fc0da639a9273b7b3021dcc5ad88cefd5c0de990
 // Configure Multer for handling file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -705,31 +717,90 @@ const realEstateContract = new ethers.Contract(realEstateContractAddress, realEs
 const escrowContractAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'; // Update with your contract's address
 const escrowContract = new ethers.Contract(escrowContractAddress, escrowContractABI, wallet);
 
+//addition of verification of file of a property
+
+
 // Endpoint to add data to IPFS and run smart contract function
 app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
   try {
     const formData = req.body; // Retrieve form data from request body
 
     // Read the image file content
-    const imageBuffer = req.file.buffer;
+    //const imageBuffer = req.file.buffer;
 
     // Add the image buffer to IPFS
+<<<<<<< HEAD
     const imageCID = await ipfs.add(imageBuffer);
-
+    console.log(imageCID + "is the image cid of the server");
     // Prepare the JSON object with the desired structure, including the image CID
-    const propertyData = {
+    let propertyData = {
       name: formData.name,
+      PropertyCID: null,
       address: formData.address,
       description: formData.description,
       imageCID: imageCID.path, // Store the CID of the image on IPFS
+=======
+    //const imageCID = await ipfs.add(imageBuffer);
+
+    // Prepare the JSON object with the desired structure, including the image CID
+    // const propertyData = {
+    //   name: formData.name,
+    //   address: formData.address,
+    //   description: formData.description,
+    //   imageCID: imageCID.path, // Store the CID of the image on IPFS
+    //   attributes: {
+    //     bath: formData.bath,
+    //     beds: formData.beds,
+    //     price: formData.price,
+    //     sqft: formData.sqft,
+    //   },
+    // };
+    const propertyData = {
+      name: "Munir Abbasi",
+      address: '30 Q-Street Karachi',
+      description: 'this is a plot',
+      imageCID: 'njsnjnjssanjsnjnjdsanjsanj', // Store the CID of the image on IPFS
+>>>>>>> fc0da639a9273b7b3021dcc5ad88cefd5c0de990
       attributes: {
-        bath: formData.bath,
-        beds: formData.beds,
-        price: formData.price,
-        sqft: formData.sqft,
+        bath: '2',
+        beds: '4',
+        price: '5',
+        sqft: '1000',
       },
     };
+    console.log("assigned add obj");
+    const filePath="C:/Software Codes/FYP/NFT_Fractionalization/Sample.xlsx";
+    
+function generateHashFromAddress(address) {
+  console.log("generatehashfx");
+  // Split the address string into components
+  const [houseNumber, street, area] = address.split(' ');
+  // Concatenate the components (you may adjust this based on your requirement)
+  const concatenatedString = `${houseNumber}${street}${area}`;
+  // Generate a hash from the concatenated string
+  const hash = crypto.createHash('sha256').update(concatenatedString).digest('hex');
+  return hash;
+}
+function extractHashesFromExcel(filePath) {
+  console.log("extractfromexcelfx");
+    // Load workbook from file
+  const workbook = xlsx.readFile(filePath);
+    // Get the first worksheet
+  const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    // Extract addresses from the first column (assuming addresses are in column A)
+  const addresses = [];
+  for (let i = 1; ; i++) {
+    const cell = worksheet[`A${i}`];
+    if (!cell || !cell.v) break; // Stop if the cell is empty
+    addresses.push(cell.v);
+  }
+  // Extract hashes from addresses
+  //const hashes = addresses.map(address => generateHashFromAddress(address));
+  return addresses;
+}function checkHashInExcel(address, filePath) {
+  console.log("checkhashinexcel");
 
+<<<<<<< HEAD
     // File path to the Excel sheet containing hashes
     const filePathexcel = "../../Sample.xlsx";
 
@@ -785,12 +856,122 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     }
 
     // Convert the property data to a JSON string
+    let data = JSON.stringify(propertyData);
+=======
+  const hashToCheck = generateHashFromAddress(address);
+  console.log(hashToCheck);
+    const hashesInExcel = extractHashesFromExcel(filePath);
+  if(hashesInExcel.includes(hashToCheck))
+    {
+        console.log(hashToCheck);
+        console.log("hash found");
+        return true;
+    }
+  else {
+    console.log(hashToCheck);
+    console.log("hash not found");
+    return false;}
+}
+    async function verifyproperty(address) {
+      console.log("inverifyproperty ");
 
+      if(propertyData.address)
+      {
+        const resadress= generateHashFromAddress(address);
+        const result = checkHashInExcel(resadress, filePath);
+        if(result)
+        {
+          console.log("Property is verified");
+          return true;
+        }
+        else{
+          console.log("Property is not verified");
+          return false;
+        }
+      }
+      return resultofverification;
+  }
+    // Convert the property data to a JSON string
     const data = JSON.stringify(propertyData);
+    console.log("called the api of verify property");
+>>>>>>> fc0da639a9273b7b3021dcc5ad88cefd5c0de990
 
+    const resultofverification= verifyproperty(propertyData.address);
+    console.log("called the api of verify property successfuly");
+
+    /*
+    console.log("assigned add obj");
+    const filePath="C:\Software Codes\FYP\NFT_Fractionalization";
+    //munir added files
+    function generateHashFromAddress(address) {
+      console.log("generatehashfx");
+      // Split the address string into components
+      const [houseNumber, street, area] = address.split(' ');
+      // Concatenate the components (you may adjust this based on your requirement)
+      const concatenatedString = `${houseNumber}${street}${area}`;
+      // Generate a hash from the concatenated string
+      const hash = crypto.createHash('sha256').update(concatenatedString).digest('hex');
+      const workbook = xlsx.utils.book_new();
+      const worksheet = xlsx.utils.aoa_to_sheet(hashes.map(hash => [hash])); // Convert hashes array to array of arrays for Excel format
+      xlsx.utils.book_append_sheet(workbook, worksheet, "Hashes"); // Add worksheet to workbook
+      xlsx.writeFile(workbook, filePath); // Write workbook to file
+      return hash;
+  }
+  function extractHashesFromExcel(filePath) {
+    console.log("extractfromexcelfx");
+
+    const workbook = xlsx.readFile(filePath);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]]; // Assuming data is in the first sheet
+    const addresses = xlsx.utils.sheet_to_json(worksheet, { header: 1 }); // Assuming addresses are in column A
+    // Extract hashes from addresses
+    const hashes = addresses.map(address => generateHashFromAddress(address));
+    return hashes;
+}
+
+
+function checkHashInExcel(address, filePath) {
+  console.log("checkhashinexcel");
+
+  const hashToCheck = generateHashFromAddress(address);
+  const hashesInExcel = extractHashesFromExcel(filePath);
+  if(hashesInExcel.includes(hashToCheck)) return true;
+  else return false;
+}
+    async function verifyproperty(address) {
+      console.log("inverifyproperty ");
+
+      if(propertyData.address)
+      {
+        const resadress= generateHashFromAddress(address);
+        const result = checkHashInExcel(resadress, filePath);
+        if(result)
+        {
+          console.log("Property is verified");
+          return true;
+        }
+        else{
+          console.log("Property is not verified");
+          return false;
+        }
+      }
+      return resultofverification;
+  }
+    // Convert the property data to a JSON string
+    const data = JSON.stringify(propertyData);
+    console.log("called the api of verify property");
+
+    const resultofverification= await verifyproperty(address);
+    console.log("called the api of verify property successfuly");
+*/
     // Add the JSON string to IPFS
     const cid = await ipfs.add(data);
+<<<<<<< HEAD
     console.log(cid);
+    let propertyDataObject = JSON.parse(data);
+    propertyDataObject.PropertyCID = cid.path;
+    data = JSON.stringify(propertyDataObject);
+
+
     const directory = '../../metadata/';
     //Counter.add();
     //const filename = Counter.count + '.json';
@@ -864,6 +1045,13 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       //out temp var for api of buy
       sellingtokenidtemp=tokenId;
 
+=======
+
+    // Run the list function of the smart contract
+    const tx = await contract.list(propertyData.name, propertyData.address, propertyData.description, imageCID.path, formData.bath, formData.beds, formData.price, formData.sqft);
+    await tx.wait(); // Wait for transaction to be mined
+
+>>>>>>> fc0da639a9273b7b3021dcc5ad88cefd5c0de990
     // Send the CID as response
     res.json({ cid: cid.toString() });
 
