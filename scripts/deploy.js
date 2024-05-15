@@ -9,10 +9,6 @@ const {ethers} = require("hardhat");
 const { exec } = require('child_process');
 
 
-module.exports = {
-makenewdeployscript:makenewdeployscript
-};
-
 const fs = require('fs');
 const path= require('path');
 const { json } = require("express");
@@ -22,6 +18,7 @@ const tokens = (n) => {
   return ethers.utils.parseUnits(n.toString(), 'ether')
 }
 
+function runMain() {
 async function main() {
    //Setup accounts
    [seller,buyer,lender,inspector] = await ethers.getSigners(); //assigns the address to each account based on the hardhat node addresses 
@@ -156,7 +153,7 @@ jsonData.forEach((data, index) => {
     console.log(__dirname);
     if (__dirname === "C:\\Users\\munir\\Documents\\GitHub\\NFT_Fractionalization\\scripts") {
       // If the script is running from the "scripts" directory
-      fs.readFile('./config.json', 'utf8', (err, data) => {
+      fs.readFile('./src/config.json', 'utf8', (err, data) => {
           if (err) {
               console.error('Error reading config file:', err);
               return;
@@ -175,7 +172,7 @@ jsonData.forEach((data, index) => {
           let newData = JSON.stringify(config, null, 4); // The last parameter is the number of spaces for indentation
   
           // Write the modified JSON back to the file
-          fs.writeFile('./config.json', newData, 'utf8', (err) => {
+          fs.writeFile('./src/config.json', newData, 'utf8', (err) => {
               if (err) {
                   console.error('Error writing config file:', err);
                   return;
@@ -185,7 +182,7 @@ jsonData.forEach((data, index) => {
       });
   } else {
       // If the script is running from a different directory
-      fs.readFile('././config.json', 'utf8', (err, data) => {
+      fs.readFile('./src/config.json', 'utf8', (err, data) => {
           if (err) {
               console.error('Error reading config file:', err);
               return;
@@ -204,7 +201,7 @@ jsonData.forEach((data, index) => {
           let newData = JSON.stringify(config, null, 4); // The last parameter is the number of spaces for indentation
   
           // Write the modified JSON back to the file
-          fs.writeFile('././config.json', newData, 'utf8', (err) => {
+          fs.writeFile('./src/config.json', newData, 'utf8', (err) => {
               if (err) {
                   console.error('Error writing config file:', err);
                   return;
@@ -262,3 +259,15 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+setInterval(async () => {
+  try {
+    await main();
+  } catch (error) {
+    console.error(error);
+    process.exitCode = 1;
+  }
+}, 45000);
+}
+
+runMain();
