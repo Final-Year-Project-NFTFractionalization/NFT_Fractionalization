@@ -2,6 +2,9 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 
 import close from '../assets/close.svg';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 
 const Home = ({ home, provider,account, escrow, togglePop }) => {
 
@@ -68,7 +71,16 @@ const[owner,setOwner]= useState(false)
         await transaction.wait()
         
         setHasBought(true)
+        
+        setOwner(buyer)
         console.log("Property bought by buyer")
+         // Display success message using SweetAlert
+         Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Property successfully bought.',
+        });
+        if (await escrow.isListed(home.id)) return;
 
     }
     const inspectHandler = async()=>{
