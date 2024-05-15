@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
 import path from 'path';
+
 // import IERC721 from '../../artifacts/contracts/Escrow.sol/IERC721.json';
 var sellingtokenidtemp;
 // import utilities from 'utilities';
@@ -777,13 +778,14 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       return false;
     }
 
-    // Verify the property against the Excel sheet
-    const verified = await verifyProperty(propertyData.address);
-    if (!verified) {
-      throw new Error("Property is not verified");
-    } else {
-      console.log("Property is successfully verified");
-    }
+   // Verify the property against the Excel sheet
+   const verified = await verifyProperty(propertyData.address);
+   if (!verified) {
+     // Throw an error with a specific message
+     return res.status(400).json({ error: 'Property is not verified' });
+   } else {
+     console.log("Property is successfully verified");
+   }
 
     // Convert the property data to a JSON string
 
@@ -835,18 +837,6 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
 
     // Mint a new NFT in the RealEstate contract by the seller
     const mintTx = await realEstateContract.mint(cid.toString());
-<<<<<<< HEAD
-    await mintTx.wait(); // Wait for NFT minting transaction to be mined
-    console.log(mintTx);
-
-    // Call the list function of the Escrow contract
-    const listTx = await escrowContract.list(
-      mintTx.hash, // NFT ID minted by the seller
-      formData.purchasePrice, // Purchase price of the property/NFT
-      formData.escrowAmount // Escrow amount for the transaction
-    );
-    await listTx.wait(); // Wait for listing transaction to be mined
-=======
     const mintReceipt = await mintTx.wait(); // Wait for NFT minting transaction to be mined
     const newItemId = mintReceipt.events[0].args[2].toNumber(); // Assuming the event logs the new item ID as the third argument
     // Retrieve the ID of the minted NFT from the transaction receipt
@@ -880,7 +870,6 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
 
       //out temp var for api of buy
       sellingtokenidtemp=tokenId;
->>>>>>> ef78b19ad6d3be8ec7e7aa228ec97c3fce23f92f
 
     // Send the CID as response
     res.json({ cid: cid.toString() });

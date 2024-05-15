@@ -77,7 +77,7 @@ async function main() {
 
 // Usage example
 //const directory = '../metadata/';
-const directory = 'C:\\Users\\munir\\Documents\\GitHub\\NFT_Fractionalization\\metadata\\';
+const directory = 'D:\\Final Year Project\\EtherEstate\\metadata';
 // const directory = '..metadata';
 let arrayofdata = [];
 const {numberOfFiles, jsonData} = countFiles(directory);
@@ -150,7 +150,6 @@ jsonData.forEach((data, index) => {
    escrowAddress = escrow.address;
 
     // Read the existing config file
-    console.log(__dirname);
     if (__dirname === "C:\\Users\\munir\\Documents\\GitHub\\NFT_Fractionalization\\scripts") {
       // If the script is running from the "scripts" directory
       fs.readFile('./src/config.json', 'utf8', (err, data) => {

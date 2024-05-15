@@ -70,54 +70,64 @@ const PropertyListingform = () => {
 
     if (validateForm()) {
       try {
-        // Make a request to the Node.js script to add data to IPFS
-        const response = await axios.post('http://localhost:3002/addDataToIPFS', listing, {
+        const formData = new FormData();
+        for (const key in listing) {
+          formData.append(key, listing[key]);
+        }
+
+        const response = await axios.post('http://localhost:3002/addDataToIPFS', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data', 
+            'Content-Type': 'multipart/form-data',
           },
         });
 
-       // Three Swal alerts within 2 seconds
-       setTimeout(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Property verified!',
-          text: 'The property has been verified.',
-          timer: 2000,
-          timerProgressBar: true,
-        });
-      }, 0); // Display immediately
+        // Handle success
+        if (response.status === 200) {
+          setTimeout(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Property verified!',
+              text: 'The property has been verified.',
+              timer: 2000,
+              timerProgressBar: true,
+            });
+          }, 0);
 
-      setTimeout(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'NFT minted!',
-          text: 'The NFT has been successfully minted.',
-          timer: 2000,
-          timerProgressBar: true,
-        });
-      }, 2000); // Display after 2 seconds
+          setTimeout(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'NFT minted!',
+              text: 'The NFT has been successfully minted.',
+              timer: 2000,
+              timerProgressBar: true,
+            });
+          }, 2000);
 
-      setTimeout(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Property listed!',
-          text: 'Your property has been successfully listed.',
-          timer: 2000,
-          timerProgressBar: true,
-        });
-      }, 4000); // Display after 4 seconds
-
+          setTimeout(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Property listed!',
+              text: 'Your property has been successfully listed.',
+              timer: 2000,
+              timerProgressBar: true,
+            });
+          }, 4000);
+        }
+        
         // Extract cid from response
         const cid = response.data.cid;
-
-        // Handle the CID as needed (e.g., store it in a database, display it to the user)
         console.log('IPFS CID:', cid);
-
-        // Log the form data
         console.log('Submitted Form Data:', listing);
       } catch (error) {
-        console.log('Error adding property to IPFS', error);
+        if (error.response && error.response.data && error.response.data.error === 'Property is not verified') {
+          Swal.fire({
+            icon: 'error',
+            title: 'Danger!',
+            text: 'Property not verified by competent authority',
+          });
+        } else {
+          console.log('Error adding property to IPFS', error);
+        }
       }
     }
   };
