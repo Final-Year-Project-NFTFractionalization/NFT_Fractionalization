@@ -26,7 +26,7 @@ async function main() {
    console.log('Minting 3 properties...\n');
 
    for (let i = 0; i < 3; i++) {
-    const transaction = await realEstate.connect(seller).mint(`https://ipfs.io/ipfs/QmQVcpsjrA6cr1iJjZAodYwmPekYgbnXGo4DFubJiLc2EB/${i + 1}.json`)
+    const transaction = await realEstate.connect(seller).mint(`https://ipfs.io/ipfs/QmQVcpsjrA6cr1iJjZAodYwmPekYgbnXGo4DFubJiLc2EB/${i + 1}.json`,{ gasLimit: 3000000 })
     await transaction.wait()
   }
 
@@ -72,33 +72,31 @@ async function main() {
 //const directory = '../metadata/';
 const directory = 'C:\\Software Codes\\FYP\\NFT_Fractionalization\\metadata\\';
 // const directory = '..metadata';
-
+let arrayofdata = [];
 const {numberOfFiles, jsonData} = countFiles(directory);
 console.log(`Number of files in directory '${directory}': ${jsonData.length}`);
 jsonData.forEach((data, index) => {
   console.log(`Data from JSON file ${index + 1}:`);
-  console.log(data);
+  // console.log(data);
+  arrayofdata.push(data);
+  console.log(arrayofdata);
+
+
   //let numberoffilesglobal = numberOfFiles;
 });
-const propertyCIDArray = [];
 
-jsonData.forEach((data, index) => {
-  propertyCIDArray.push(data.propertyCID);
-  console.log(`Property CID from JSON file ${index + 1}: ${data.propertyCID}`);
-});
+     const filePath = directory + 4 + '.json';
 
-console.log(jsonData);
-
-     const filePath = directory + 3 + '.json';
-
-      for (let i = 3; i < jsonData.length; i++) {
+      for (let i = 4; i < jsonData.length; i++) {
         // let imagescid= jsonData.findIndexi.imagescid;
         // let imagescid = jsonData.[i].imageCID;
-        const transaction = await realEstate.connect(seller).mint(`https://ipfs.io/ipfs/${propertyCIDArray[i]}/${i+1}.json`);
+        const transaction = await realEstate.connect(seller).mint(`http://127.0.0.1:8080/ipfs/${arrayofdata[i].PropertyCID}/`,{ gasLimit: 3000000 });
         await transaction.wait();
-        console.log(`Minted property ${i} with IPFS CID: ${propertyCIDArray[i]}`);
-        console.log(`The transaction hash for json is ${transaction.hash}`);
+        console.log(`Minted property ${i} with IPFS CID: ${arrayofdata[i].PropertyCID}`);
+        // console.log(`The transaction hash for json is ${transaction.hash}`);
       }
+
+      // const transaction=await realEstate.connect(seller).mint(`http://127.0.0.1:8080/ipfs/QmbSPMg8n1ViWPiuEZZnXE4eNcgRia1yakX8fCrDV2tZUn/`);
 
 
       ///bergin for properties from here
@@ -114,30 +112,28 @@ console.log(jsonData);
 
   for (let i = 0; i < 3; i++) {
     // Approve properties...
-    let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1)
-    await transaction.wait()
+    // let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1,{ gasLimit: 3000000 })
+    // await transaction.wait()
     
   }
+
   for (let i = 3; i < jsonData.length; i++) {
     // Approve properties...
-    let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1)
-    await transaction.wait()
-
-    const property = jsonData[i];
-    console.log(property)
+    // let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1,{ gasLimit: 3000000 })
+    // await transaction.wait()
 
   }
 
   // Listing properties...
-  transaction = await escrow.connect(seller).list(1, tokens(20), tokens(10))
-  await transaction.wait()
+  // transaction = await escrow.connect(seller).list(1, tokens(20), tokens(10),{ gasLimit: 3000000 })
+  // await transaction.wait()
 
-  transaction = await escrow.connect(seller).list(2, tokens(15), tokens(5))
-  await transaction.wait()
+  // transaction = await escrow.connect(seller).list(2, tokens(15), tokens(5),{ gasLimit: 3000000 })
+  // await transaction.wait()
 
-  transaction = await escrow.connect(seller).list(3, tokens(10), tokens(5))
-  await transaction.wait()
-
+  // transaction = await escrow.connect(seller).list(3, tokens(10), tokens(5),{ gasLimit: 3000000 })
+  // await transaction.wait()
+  
   
   console.log(`Deployed Escrow Contract at: ${escrow.address}`)
   console.log(`Listing 3 properties...\n`)
@@ -145,12 +141,19 @@ console.log(jsonData);
 
   //Metadata code deploy
   for (let i = 3; i < jsonData.length; i++) {
-    // Approve properties...
-    let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1)
-    await transaction.wait()
+    // Listing properties...
 
-    const property = jsonData[i];
-    console.log(property)
+    //change the datatype
+    // console.log(arrayofdata[i].attributes.);
+    //console.log(jsonData[i].attributes[2].price);
+    // priceTokens = tokens(parseInt((jsonData[i].attributes[2].price)));
+    priceTokens = tokens(10)
+
+    // transaction = await escrow.connect(seller).list(i+1, priceTokens, priceTokens,{ gasLimit: 3000000 })
+    // await transaction.wait()
+
+    // const property = jsonData[i];
+    // console.log(property)
   }
 
   console.log(`Finished.`)
@@ -162,67 +165,3 @@ main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-
-// const {ethers} = require("hardhat");
-
-// const tokens = (n) => {
-//   return ethers.utils.parseUnits(n.toString(), 'ether')
-// }
-
-// async function main() {
-//    //Setup accounts
-//    [seller,buyer,lender,inspector] = await ethers.getSigners(); //assigns the address to each account based on the hardhat node addresses 
-
-//    //Deploy Real Estate
-//    const RealEstate = await ethers.getContractFactory('RealEstate');
-//    const realEstate = await RealEstate.deploy();
-//    await realEstate.deployed();
-
-//    console.log(`Deployed Real Estate Contract at: ${realEstate.address}`);
-//    console.log('Minting 3 properties...\n');
-
-//    for (let i = 0; i < 3; i++) {
-//     const transaction = await realEstate.connect(seller).mint(`https://ipfs.io/ipfs/QmQVcpsjrA6cr1iJjZAodYwmPekYgbnXGo4DFubJiLc2EB/${i + 1}.json`)
-//     await transaction.wait()
-//   }
-
-//   // Deploy Escrow
-//   const Escrow = await ethers.getContractFactory('Escrow')
-//   const escrow = await Escrow.deploy(
-//     realEstate.address,
-//     lender.address,
-//     inspector.address,
-//     seller.address
-//   )
-//   await escrow.deployed()
-
-//   console.log(`Deployed Escrow Contract at: ${escrow.address}`)
-//   console.log(`Listing 3 properties...\n`)
-
-//   for (let i = 0; i < 3; i++) {
-//     // Approve properties...
-//     let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1)
-//     await transaction.wait()
-//   }
-
-//   // Listing properties...
-//   transaction = await escrow.connect(seller).list(1, tokens(20), tokens(10))
-//   await transaction.wait()
-
-//   transaction = await escrow.connect(seller).list(2, tokens(15), tokens(5))
-//   await transaction.wait()
-
-//   transaction = await escrow.connect(seller).list(3, tokens(10), tokens(5))
-//   await transaction.wait()
-
-//   console.log(`Finished.`)
-// } 
-
-// // We recommend this pattern to be able to use async/await everywhere
-// // and properly handle errors.
-// main().catch((error) => {
-//   console.error(error);
-//   process.exitCode = 1;
-// });
-

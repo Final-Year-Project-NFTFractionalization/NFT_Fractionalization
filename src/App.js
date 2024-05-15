@@ -37,7 +37,10 @@ const loadBlockchainData = async()=>{
   const network = await provider.getNetwork()
 
    const realEstate= new ethers.Contract(config[network.chainId].realEstate.address ,RealEstate, provider)
-    const totalSupply = await realEstate.totalSupply()
+   console.log(config[network.chainId].realEstate.address, config[network.chainId].escrow.address )
+   const totalSupply = await realEstate.totalSupply();
+    
+    console.log(totalSupply);
     const homes=[]
 
     for(var i=1 ; i <= totalSupply; i++){
@@ -46,8 +49,8 @@ const loadBlockchainData = async()=>{
       const metadata = await response.json()
       homes.push(metadata)
     }
-    setHomes(homes)
-    console.log(homes)
+    setHomes(homes);
+    console.log(homes);
   const escrow= new ethers.Contract(config[network.chainId].escrow.address ,Escrow, provider)
   setEscrow(escrow)
   window.ethereum.on('accountsChanged',async()=>{
