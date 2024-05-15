@@ -8,6 +8,7 @@ import crypto from 'crypto';
 import xlsx from 'xlsx';
 import { ethers } from 'ethers'; // Import ethers for Ethereum interactions
 import path from 'path';
+import makenewdeployscript from '../../scripts/deploy.js';
 // import IERC721 from '../../artifacts/contracts/Escrow.sol/IERC721.json';
 var sellingtokenidtemp;
 // import utilities from 'utilities';
@@ -871,6 +872,11 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
 
     // Send the CID as response
     res.json({ cid: cid.toString() });
+
+      //now give a call to deploy.js to set the config files
+      makenewdeployscript();    
+
+
 
 
   } catch (error) {

@@ -6,10 +6,18 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const {ethers} = require("hardhat");
+const { exec } = require('child_process');
+
+
+module.exports = {
+makenewdeployscript:makenewdeployscript
+};
+
 const fs = require('fs');
 const path= require('path');
 const { json } = require("express");
-
+let escrowaddress;
+let realestateaddress;
 const tokens = (n) => {
   return ethers.utils.parseUnits(n.toString(), 'ether')
 }
@@ -24,8 +32,9 @@ async function main() {
    await realEstate.deployed();
 
    console.log(`Deployed Real Estate Contract at: ${realEstate.address}`);
+   realestateaddress=realEstate.address;
    console.log('Minting 3 properties...\n');
-
+   
    for (let i = 0; i < 3; i++) {
     const transaction = await realEstate.connect(seller).mint(`https://ipfs.io/ipfs/QmQVcpsjrA6cr1iJjZAodYwmPekYgbnXGo4DFubJiLc2EB/${i + 1}.json`,{ gasLimit: 3000000 })
     await transaction.wait()
@@ -71,7 +80,7 @@ async function main() {
 
 // Usage example
 //const directory = '../metadata/';
-const directory = 'C:\\Software Codes\\FYP\\NFT_Fractionalization\\metadata\\';
+const directory = 'C:\\Users\\munir\\Documents\\GitHub\\NFT_Fractionalization\\metadata\\';
 // const directory = '..metadata';
 let arrayofdata = [];
 const {numberOfFiles, jsonData} = countFiles(directory);
@@ -136,9 +145,75 @@ jsonData.forEach((data, index) => {
   // transaction = await escrow.connect(seller).list(3, tokens(10), tokens(5),{ gasLimit: 3000000 })
   // await transaction.wait()
   
-  
+  escrowaddress= escrow.address;
   console.log(`Deployed Escrow Contract at: ${escrow.address}`)
   console.log(`Listing 3 properties...\n`)
+
+  const realEstateAddress = realEstate.address;
+   escrowAddress = escrow.address;
+
+    // Read the existing config file
+    console.log(__dirname);
+    if (__dirname === "C:\\Users\\munir\\Documents\\GitHub\\NFT_Fractionalization\\scripts") {
+      // If the script is running from the "scripts" directory
+      fs.readFile('./config.json', 'utf8', (err, data) => {
+          if (err) {
+              console.error('Error reading config file:', err);
+              return;
+          }
+  
+          // Parse JSON data
+          let config = JSON.parse(data);
+  
+          // Set the new real estate address dynamically
+          config['31337']['realEstate']['address'] = realEstateAddress;
+  
+          // Set the new escrow address dynamically
+          config['31337']['escrow']['address'] = escrowAddress;
+  
+          // Convert the modified object back to JSON
+          let newData = JSON.stringify(config, null, 4); // The last parameter is the number of spaces for indentation
+  
+          // Write the modified JSON back to the file
+          fs.writeFile('./config.json', newData, 'utf8', (err) => {
+              if (err) {
+                  console.error('Error writing config file:', err);
+                  return;
+              }
+              console.log('Config file has been updated.');
+          });
+      });
+  } else {
+      // If the script is running from a different directory
+      fs.readFile('././config.json', 'utf8', (err, data) => {
+          if (err) {
+              console.error('Error reading config file:', err);
+              return;
+          }
+  
+          // Parse JSON data
+          let config = JSON.parse(data);
+  
+          // Set the new real estate address dynamically
+          config['31337']['realEstate']['address'] = realEstateAddress;
+  
+          // Set the new escrow address dynamically
+          config['31337']['escrow']['address'] = escrowAddress;
+  
+          // Convert the modified object back to JSON
+          let newData = JSON.stringify(config, null, 4); // The last parameter is the number of spaces for indentation
+  
+          // Write the modified JSON back to the file
+          fs.writeFile('././config.json', newData, 'utf8', (err) => {
+              if (err) {
+                  console.error('Error writing config file:', err);
+                  return;
+              }
+              console.log('Config file has been updated.');
+          });
+      });
+  }
+  
 
 
   //Metadata code deploy
@@ -160,6 +235,26 @@ jsonData.forEach((data, index) => {
 
   console.log(`Finished.`)
 } 
+module.exports = makenewdeployscript;
+function makenewdeployscript(){
+
+  const commandToRun = 'npx hardhat run ../../scripts/deploy.js --network localhost';
+  exec(commandToRun, (error, stdout, stderr) => {
+    if (error) {
+        console.error(`Error executing command: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.error(`Command stderr: ${stderr}`);
+        return;
+    }
+
+
+    
+});
+
+}
+
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
