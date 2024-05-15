@@ -75,10 +75,9 @@ async function main() {
 
 
 
-// Usage example
-//const directory = '../metadata/';
-const directory = 'C:\\Users\\munir\\Documents\\GitHub\\NFT_Fractionalization\\metadata\\';
-// const directory = '..metadata';
+
+//working in init laptop
+const directory = 'C://Software Codes/FYP/NFT_Fractionalization/metadata';
 let arrayofdata = [];
 const {numberOfFiles, jsonData} = countFiles(directory);
 console.log(`Number of files in directory '${directory}': ${jsonData.length}`);

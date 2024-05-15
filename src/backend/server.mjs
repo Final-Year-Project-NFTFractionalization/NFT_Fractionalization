@@ -737,11 +737,11 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     // Function to generate hash from address
     function generateHashFromAddress(address) {
       // Split the address string into components
-      const [houseNumber, street, area] = address.split(' ');
+      //const [houseNumber, street, area] = address.split(' ');
       // Concatenate the components (you may adjust this based on your requirement)
-      const concatenatedString = `${houseNumber}${street}${area}`;
+      //const concatenatedString = `${houseNumber}${street}${area}`;
       // Generate a hash from the concatenated string
-      const hash = crypto.createHash('sha256').update(concatenatedString).digest('hex');
+      const hash = crypto.createHash('sha256').update(address).digest('hex');
       return hash;
     }
 
@@ -855,7 +855,6 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       // Retrieve the user's Metamask address
       const seller = await signer.getAddress(); // This will retrieve the current user's address from Metamask
       let mintcontractevent= parseInt(timestampHash());
- 
       // await IERC721(realEstateContract.address).transferFrom(seller, escrowContract.address, newItemId);
       const listTx = await escrowContractWithSigner.list(
         tokenId,

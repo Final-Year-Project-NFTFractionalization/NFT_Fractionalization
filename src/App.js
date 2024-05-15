@@ -67,6 +67,7 @@ const loadBlockchainData = async()=>{
 
 
     const togglePop = (home) =>{
+      console.log(home)
         setHome(home)
         toggle ? setToggle(false) : setToggle(true)
     }
@@ -105,7 +106,9 @@ const loadBlockchainData = async()=>{
 ))}
 
         </div>
-      </div></div>}></Route>
+      </div></div>}>
+        
+      </Route>
       <Route path="/PropertyListingform" element={<PropertyListingform />}></Route>
       <Route path="/Properties" element={<Properties />}></Route>
 
@@ -114,7 +117,6 @@ const loadBlockchainData = async()=>{
       
               {toggle && (
                 <Home home={home} provider={provider} account={account} escrow={escrow} togglePop={togglePop}       />
-
               )}
 
 
