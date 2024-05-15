@@ -861,7 +861,7 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       const listTx = await escrowContractWithSigner.list(
         tokenId,
         price,
-        price,
+        price/4,
         { from: seller, gasLimit: 10000000 } // Pass the Metamask address and specify gas limit
       );
       //console.log(mintcontractevent);

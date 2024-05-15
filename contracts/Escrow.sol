@@ -2,13 +2,12 @@
 pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
-
 interface IERC721 {
     function transferFrom(address _from, address _to, uint256 _id) external;
 }
 
 contract Escrow {
-//    event SaleComplete(uint256 indexed nftID, address indexed buyer, address indexed seller, address escrowContract);
+    //    event SaleComplete(uint256 indexed nftID, address indexed buyer, address indexed seller, address escrowContract);
     address public nftAddress; //store smart contract address for nft for a particular real estate transaction
     address public lender;
     address public inspector;
@@ -57,16 +56,20 @@ contract Escrow {
         uint256 _purchasePrice,
         uint256 _escrowAmount
     ) public payable onlySeller {
-            //create an instance of the ERC721 contract located at address 'nftAddress'
-            //seller listing function and it's address captured through msg.sender
-            //this nft address that seller has now is stored in this smart contract address until a purchase made
-            //_nftID passed
+        //create an instance of the ERC721 contract located at address 'nftAddress'
+        //seller listing function and it's address captured through msg.sender
+        //this nft address that seller has now is stored in this smart contract address until a purchase made
+        //_nftID passed
         IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID);
 
         isListed[_nftID] = true;
         purchasePrice[_nftID] = _purchasePrice;
         escrowAmount[_nftID] = _escrowAmount;
-        console.log("Transferring NFT from %s to %s address",msg.sender,address(this));
+        console.log(
+            "Transferring NFT from %s to %s address",
+            msg.sender,
+            address(this)
+        );
     }
 
     function depositEarnest(uint256 _nftID) public payable onlyBuyer(_nftID) {
@@ -91,10 +94,10 @@ contract Escrow {
     }
 
     function finalizeSale(uint256 _nftID) public {
-        // require(inspectionPassed[_nftID]);
-        // require(approval[_nftID][buyer[_nftID]]);
-        // require(approval[_nftID][seller]);
-        // require(approval[_nftID][lender]);
+        require(inspectionPassed[_nftID]);
+        require(approval[_nftID][buyer[_nftID]]);
+        require(approval[_nftID][seller]);
+        require(approval[_nftID][lender]);
         require(address(this).balance >= purchasePrice[_nftID]);
 
         isListed[_nftID] = false;
@@ -106,7 +109,11 @@ contract Escrow {
 
         //Trasnfer ownership of nft from contract address to buyer
         IERC721(nftAddress).transferFrom(address(this), buyer[_nftID], _nftID);
-        console.log("Transferring NFT from %s to %s address",address(this),buyer[_nftID]);
+        console.log(
+            "Transferring NFT from %s to %s address",
+            address(this),
+            buyer[_nftID]
+        );
         //emit SaleComplete(_nftID, buyer[_nftID], seller,address(this));
     }
 }

@@ -118,29 +118,31 @@ jsonData.forEach((data, index) => {
   )
   await escrow.deployed()
 
+
+  //APPROVING FIRST 3 PROPERTIES
   for (let i = 0; i < 3; i++) {
     // Approve properties...
-    // let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1,{ gasLimit: 3000000 })
-    // await transaction.wait()
+    let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1,{ gasLimit: 3000000 })
+    await transaction.wait()
     
   }
 
-  for (let i = 3; i < jsonData.length; i++) {
-    // Approve properties...
-    // let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1,{ gasLimit: 3000000 })
-    // await transaction.wait()
+  // for (let i = 3; i < jsonData.length; i++) {
+  //   // Approve properties...
+  //   // let transaction = await realEstate.connect(seller).approve(escrow.address, i + 1,{ gasLimit: 3000000 })
+  //   // await transaction.wait()
 
-  }
+  // }
 
   // Listing properties...
-  // transaction = await escrow.connect(seller).list(1, tokens(20), tokens(10),{ gasLimit: 3000000 })
-  // await transaction.wait()
+  transaction = await escrow.connect(seller).list(1, tokens(20), tokens(10),{ gasLimit: 3000000 })
+  await transaction.wait()
 
-  // transaction = await escrow.connect(seller).list(2, tokens(15), tokens(5),{ gasLimit: 3000000 })
-  // await transaction.wait()
+  transaction = await escrow.connect(seller).list(2, tokens(15), tokens(5),{ gasLimit: 3000000 })
+  await transaction.wait()
 
-  // transaction = await escrow.connect(seller).list(3, tokens(10), tokens(5),{ gasLimit: 3000000 })
-  // await transaction.wait()
+  transaction = await escrow.connect(seller).list(3, tokens(10), tokens(5),{ gasLimit: 3000000 })
+  await transaction.wait()
   
   escrowaddress= escrow.address;
   console.log(`Deployed Escrow Contract at: ${escrow.address}`)
