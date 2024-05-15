@@ -150,6 +150,7 @@ jsonData.forEach((data, index) => {
    escrowAddress = escrow.address;
 
     // Read the existing config file
+    console.log(__dirname);
     if (__dirname === "C:\\Users\\munir\\Documents\\GitHub\\NFT_Fractionalization\\scripts") {
       // If the script is running from the "scripts" directory
       fs.readFile('./src/config.json', 'utf8', (err, data) => {
