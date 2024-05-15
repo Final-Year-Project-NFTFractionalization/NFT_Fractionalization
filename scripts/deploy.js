@@ -79,7 +79,7 @@ jsonData.forEach((data, index) => {
   console.log(`Data from JSON file ${index + 1}:`);
   // console.log(data);
   arrayofdata.push(data);
-  console.log(arrayofdata);
+  // console.log(arrayofdata);
 
 
   //let numberoffilesglobal = numberOfFiles;
@@ -87,9 +87,10 @@ jsonData.forEach((data, index) => {
 
      const filePath = directory + 4 + '.json';
 
-      for (let i = 4; i < jsonData.length; i++) {
+      for (let i = 3; i < jsonData.length; i++) {
         // let imagescid= jsonData.findIndexi.imagescid;
         // let imagescid = jsonData.[i].imageCID;
+        console.log(arrayofdata[i].PropertyCID)
         const transaction = await realEstate.connect(seller).mint(`http://127.0.0.1:8080/ipfs/${arrayofdata[i].PropertyCID}/`,{ gasLimit: 3000000 });
         await transaction.wait();
         console.log(`Minted property ${i} with IPFS CID: ${arrayofdata[i].PropertyCID}`);
