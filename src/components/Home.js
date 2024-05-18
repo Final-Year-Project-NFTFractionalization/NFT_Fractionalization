@@ -210,84 +210,118 @@ const[owner,setOwner]= useState(false)
 else{
 
     return (
-        <div className="home">
-            <div className='home__details' onClick={() => togglePop(home)}>
-                <div className='home__image'>
-                    <img src={home.image || `http://127.0.0.1:8080/ipfs/${home.imageCID}`} alt='Home' />
-                </div>
-{/* {Object.entries(home.attributes).map(([trait, value], index) => (
+      <div className="home">
+        <div className="home__details" onClick={() => togglePop(home)}>
+          <div className="home__image">
+            <img
+              src={home.image || `http://127.0.0.1:8080/ipfs/${home.imageCID}`}
+              alt="Home"
+            />
+          </div>
+          {/* {Object.entries(home.attributes).map(([trait, value], index) => (
                                     <li key={index}><strong>{trait}</strong>: {value}</li>
                                 ))} */}
-                <div className='home__overview'>
-                    <h1>{home.name}</h1>
-                    {home.attributes ? (
-                        <div>
-                            <p>
-                                <strong>{home.attributes.bath}</strong> bds|
-                                <strong>{home.attributes.beds}</strong> ba |
-                                <strong>{home.attributes.sqft}</strong> sqft
-                            </p>
-                            <p>{home.address}</p>
-                            <h2>{home.attributes.price} ETH</h2>
-                            {owner ? (
-                        <div className='home__owned'> 
-                        Owned by {owner.slice(0,6)+'...'+owner.slice(38,42)}
-                        
-                        </div>
-                     ):(
-                    <div>
-                        {(account ===inspector)?(
-
-                        <button className='home__buy'  onClick={inspectHandler} disabled={hasInspected} > Approve Inspection </button>
-
-
-
-                        ): (account === lender) ?(
-                            <button className='home__buy'   onClick={lendHandler} disabled={hasLended}> Approve & Lend </button>
-
-                        ):(account ===seller) ? (
-                            <button className='home__buy'  onClick={sellHandler} disabled={hasSold} > Approve & Sell </button>
-
-                        ):(
-                            <button className='home__buy'  onClick={buyHandler} disabled={hasBought} > Buy </button>
-
-                        )}
-
-                          <button className='home__contact'>Contact Agent</button>
-
-                    </div>
+          <div className="home__overview">
+            <h1>{home.name}</h1>
+            {home.attributes ? (
+              <div>
+                <p>
+                  <strong>{home.attributes.bath}</strong> bds|
+                  <strong>{home.attributes.beds}</strong> ba |
+                  <strong>{home.attributes.sqft}</strong> sqft
+                </p>
+                <p>{home.address}</p>
+                <h2>{home.attributes.price} ETH</h2>
+                {owner ? (
+                  <div className="home__owned">
+                    Owned by {owner.slice(0, 6) + "..." + owner.slice(38, 42)}
+                  </div>
+                ) : (
+                  <div>
+                    {account === inspector ? (
+                      <button
+                        className="home__buy"
+                        onClick={inspectHandler}
+                        disabled={hasInspected}
+                      >
+                        {" "}
+                        Approve Inspection{" "}
+                      </button>
+                    ) : account === lender ? (
+                      <button
+                        className="home__buy"
+                        onClick={lendHandler}
+                        disabled={hasLended}
+                      >
+                        {" "}
+                        Approve & Lend{" "}
+                      </button>
+                    ) : account === seller ? (
+                      <button
+                        className="home__buy"
+                        onClick={sellHandler}
+                        disabled={hasSold}
+                      >
+                        {" "}
+                        Approve & Sell{" "}
+                      </button>
+                    ) : (
+                      <button
+                        className="home__buy"
+                        onClick={buyHandler}
+                        disabled={hasBought}
+                      >
+                        {" "}
+                        Buy{" "}
+                      </button>
                     )}
-                            <hr/>
-                            <h2>Overview</h2>
-                            <p>{home.description}</p>
-                            <hr />
-                            <h2>Facts and Features</h2>
-                            <ul>
-                                {/* {Object.entries(home.attributes).map(([trait, value], index) => (
+
+                    <button className="home__contact">Contact Agent</button>
+                  </div>
+                )}
+                <hr />
+                <h2>Overview</h2>
+                <p>{home.description}</p>
+                <hr />
+                <h2>Facts and Features</h2>
+                <ul>
+                  {/* {Object.entries(home.attributes).map(([trait, value], index) => (
                                     <li key={index}><strong>{trait}</strong>: {value}</li>
                                 ))} 
                                 */}
 
-                                    <li >
-                                        <strong> Bedrooms: </strong> {home.attributes.bath}</li>
-                                     <li>   <strong> Bathrooms: </strong> {home.attributes.bath}</li>
-                                      <li>  <strong> Type Of Residence: </strong> Condo </li>
-                                     <li>   <strong> Square Feet: </strong> {home.attributes.bath}</li>
-                                     <li>   <strong> Purchase Price: </strong> {home.attributes.price}   </li>
-
-                            </ul>
-                        </div>
-                    ) : (
-                        <div>
-                            <p>{home.description}</p>
-                        </div>
-                    )}
-                </div>
-                <button className='home__close'>
-                    <img src={close} alt='Close' />
-                </button>
-            </div>
+                  <li>
+                    <strong> Bedrooms: </strong> {home.attributes.bath}
+                  </li>
+                  <li>
+                    {" "}
+                    <strong> Bathrooms: </strong> {home.attributes.bath}
+                  </li>
+                  <li>
+                    {" "}
+                    <strong> Type Of Residence: </strong> Condo{" "}
+                  </li>
+                  <li>
+                    {" "}
+                    <strong> Square Feet: </strong> {home.attributes.bath}
+                  </li>
+                  <li>
+                    {" "}
+                    <strong> Purchase Price: </strong> {home.attributes.price}{" "}
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <div>
+                <p>{home.description}</p>
+              </div>
+            )}
+          </div>
+          <button className="home__close">
+            <img src={close} alt="Close" />
+          </button>
         </div>
+      </div>
     );
 
 

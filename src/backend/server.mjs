@@ -841,7 +841,7 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
     const newItemId = mintReceipt.events[0].args[2].toNumber(); // Assuming the event logs the new item ID as the third argument
     // Retrieve the ID of the minted NFT from the transaction receipt
     const tokenId = mintReceipt.events[0].args.tokenId.toNumber();
-    console.log(`Minted NFT with ID maybe: ${tokenId}`);
+    console.log(`Minted NFT with ID : ${tokenId}`);
     //console.log(`Minted NFT with ID maybe: ${mintReceipt.events[0].args.tokenId.toNumber()}`);
 
     // Check if the conversion of price is successful
@@ -861,7 +861,7 @@ app.post('/addDataToIPFS', upload.single('image'), async (req, res) => {
       const listTx = await escrowContractWithSigner.list(
         tokenId,
         price,
-        price/4,
+        price,
         { from: seller, gasLimit: 10000000 } // Pass the Metamask address and specify gas limit
       );
       //console.log(mintcontractevent);
