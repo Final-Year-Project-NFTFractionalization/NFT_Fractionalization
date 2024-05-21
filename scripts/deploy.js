@@ -81,7 +81,7 @@ async function main() {
 
 // const directory = '..metadata';
 
-const directory = 'C://Software Codes/FYP/NFT_Fractionalization/metadata';
+const directory = 'D:\\Final Year Project\\EtherEstate\\metadata';
 
 let arrayofdata = [];
 const {numberOfFiles, jsonData} = countFiles(directory);
