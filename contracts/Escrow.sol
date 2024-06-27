@@ -7,24 +7,9 @@ interface IERC721 {
 }
 
 contract Escrow {
-    //    event SaleComplete(uint256 indexed nftID, address indexed buyer, address indexed seller, address escrowContract);
-    address public nftAddress; //store smart contract address for nft for a particular real estate transaction
+    address public nftAddress;
     address public lender;
     address public inspector;
-    address payable public seller; //will recieve cryptocurrency in transaction so make payable
-
-    modifier onlySeller() {
-        require(msg.sender == seller, "Only seller can call this method");
-        _;
-    }
-
-    modifier onlyBuyer(uint256 _nftID) {
-        require(
-            msg.sender == buyer[_nftID],
-            "Only Buyer can call this function"
-        );
-        _;
-    }
 
     modifier onlyInspector() {
         require(msg.sender == inspector, "Only inspector can call this method");
@@ -36,35 +21,27 @@ contract Escrow {
     mapping(uint256 => uint256) public escrowAmount;
     mapping(uint256 => address) public buyer;
     mapping(uint256 => bool) public inspectionPassed;
-    mapping(uint256 => mapping(address => bool)) public approval; //mapping id of nft on the person(lender,inspector,etc) who whether approved or not the property
+    mapping(uint256 => mapping(address => bool)) public approval;
+    mapping(uint256 => address) public propertyOwner;
 
-    constructor(
-        address _nftAddress,
-        address _lender,
-        address _inspector,
-        address payable _seller
-    ) {
+    constructor(address _nftAddress, address _lender, address _inspector) {
         nftAddress = _nftAddress;
         lender = _lender;
         inspector = _inspector;
-        seller = _seller;
     }
 
-    //Listing properties on our website
     function list(
         uint256 _nftID,
         uint256 _purchasePrice,
         uint256 _escrowAmount
-    ) public payable onlySeller {
-        //create an instance of the ERC721 contract located at address 'nftAddress'
-        //seller listing function and it's address captured through msg.sender
-        //this nft address that seller has now is stored in this smart contract address until a purchase made
-        //_nftID passed
+    ) public {
         IERC721(nftAddress).transferFrom(msg.sender, address(this), _nftID);
 
         isListed[_nftID] = true;
         purchasePrice[_nftID] = _purchasePrice;
         escrowAmount[_nftID] = _escrowAmount;
+        propertyOwner[_nftID] = msg.sender;
+
         console.log(
             "Transferring NFT from %s to %s address",
             msg.sender,
@@ -72,11 +49,15 @@ contract Escrow {
         );
     }
 
-    function depositEarnest(uint256 _nftID) public payable onlyBuyer(_nftID) {
-        require(msg.value >= escrowAmount[_nftID]);
+    function depositEarnest(uint256 _nftID) public payable {
+        require(
+            msg.value >= escrowAmount[_nftID],
+            "Insufficient earnest money deposit"
+        );
+        buyer[_nftID] = msg.sender;
     }
 
-    // function recieve() external payable {}
+    // function receive() external payable {}
 
     function getBalance() public view returns (uint256) {
         return address(this).balance;
@@ -93,27 +74,33 @@ contract Escrow {
         approval[_nftID][msg.sender] = true;
     }
 
-    function finalizeSale(uint256 _nftID) public {
-        require(inspectionPassed[_nftID]);
-        require(approval[_nftID][buyer[_nftID]]);
-        require(approval[_nftID][seller]);
-        require(approval[_nftID][lender]);
-        require(address(this).balance >= purchasePrice[_nftID]);
+    function finalizeSale(uint256 _nftID) public payable {
+        require(inspectionPassed[_nftID], "Inspection not passed");
+        require(
+            approval[_nftID][propertyOwner[_nftID]],
+            "Seller approval missing"
+        );
+        require(
+            msg.sender == buyer[_nftID],
+            "You did not deposit earnest of this property!"
+        );
+        require(
+            address(this).balance >= purchasePrice[_nftID],
+            "Insufficient contract balance"
+        );
 
         isListed[_nftID] = false;
 
-        (bool success, ) = payable(seller).call{value: address(this).balance}(
-            ""
-        );
-        require(success);
+        (bool success, ) = payable(propertyOwner[_nftID]).call{
+            value: purchasePrice[_nftID]
+        }("");
+        require(success, "Transfer to seller failed");
 
-        //Trasnfer ownership of nft from contract address to buyer
         IERC721(nftAddress).transferFrom(address(this), buyer[_nftID], _nftID);
         console.log(
             "Transferring NFT from %s to %s address",
             address(this),
             buyer[_nftID]
         );
-        //emit SaleComplete(_nftID, buyer[_nftID], seller,address(this));
     }
 }
